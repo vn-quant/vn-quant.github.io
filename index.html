@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vũ Nhật Quang — Risk Modeling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=STIX+Two+Text:ital,wght@1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* bộ màu: nền xám, thành phần trắng – đen – đỏ */
+  --paper:#EBEBEB; --surface:#FFFFFF; --ink:#111111; --muted:#5F5F5F; --rule:#D2D2D2; --path:17,17,17; --path-a:.035; --accent:#D7191F; --hot:#8E1418; --hot-a:.14;
+  --nav-h:64px; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#202020; --surface:#141414; --ink:#F2F2F2; --muted:#A3A3A3; --rule:#3A3A3A; --path:242,242,242; --path-a:.012; --accent:#F0383E; --hot:#FF9C9C; --hot-a:.16; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#202020; --surface:#141414; --ink:#F2F2F2; --muted:#A3A3A3; --rule:#3A3A3A; --path:242,242,242; --path-a:.012; --accent:#F0383E; --hot:#FF9C9C; --hot-a:.16; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+
+/* nav — đường kẻ dưới nav chính là lằn ranh */
+.nav{position:fixed;inset:0 0 auto 0;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;background:var(--surface);border-bottom:1px solid var(--ink);z-index:10}
+.brand{display:flex;align-items:center;gap:12px;font-weight:600;font-size:15px;letter-spacing:-.01em}
+.links{display:flex;gap:32px;align-items:center;font-size:15px}
+.toggle{background:none;border:0;padding:4px;cursor:pointer;color:var(--ink);display:flex}
+
+/* hero */
+#hero{position:relative;height:100vh;min-height:640px;overflow:hidden}
+#fig{position:absolute;inset:0;width:100%;height:100%;display:block}
+.intro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:var(--nav-h) 24px 0}
+.over{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 20px}
+h1{font-size:104px;font-weight:700;letter-spacing:-.045em;line-height:1.08;margin:0;text-transform:uppercase}
+.tag{font-size:24px;font-weight:400;line-height:1.45;max-width:760px;margin:24px 0 36px}
+.cta{display:flex;gap:16px}
+.btn{border:1px solid var(--ink);padding:12px 28px;font-size:15px;font-weight:500;background:var(--surface)}
+.btn.primary{background:var(--ink);color:var(--surface)}
+.facts{position:absolute;left:0;right:0;bottom:36px;display:flex;justify-content:center;gap:40px;font-size:14px;color:var(--muted)}
+.facts span+span{border-left:1px solid var(--rule);padding-left:40px}
+
+/* các section bên dưới — Swiss: đường kẻ thay cho hộp */
+.wrap{max-width:1200px;margin:0 auto;padding:0 48px}
+.sec{padding:112px 0 24px}
+.sec-h{display:grid;grid-template-columns:72px 1fr auto;align-items:baseline;border-top:1px solid var(--ink);padding-top:18px;margin-bottom:48px}
+.idx{font-size:14px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums}
+h2{font-size:44px;font-weight:700;letter-spacing:-.025em;margin:0}
+.more{font-size:15px;font-weight:500;border-bottom:1px solid var(--ink);padding-bottom:2px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.card{border-top:1px solid var(--rule);padding-top:20px}
+.card-n{font-size:13px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.card h3{font-size:24px;font-weight:600;letter-spacing:-.015em;margin:28px 0 6px}
+.meta{font-size:14px;color:var(--muted);margin:0 0 16px}
+.desc{font-size:16px;line-height:1.55;margin:0 0 20px}
+.chips{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px}
+.chips li{font-size:12px;font-weight:500;border:1px solid var(--rule);padding:4px 10px;border-radius:2px}
+.posts{list-style:none;padding:0;margin:0}
+.posts li{display:grid;grid-template-columns:220px 1fr 40px;gap:24px;align-items:baseline;border-top:1px solid var(--rule);padding:28px 0}
+.series{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.post-t{font-size:26px;font-weight:600;letter-spacing:-.02em;line-height:1.25;display:block}
+.deck{font-size:16px;color:var(--muted);margin:8px 0 0;line-height:1.5}
+.arrow{font-size:22px;text-align:right}
+.statement{font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1.3;max-width:920px;margin:0 0 20px}
+.statement.muted{color:var(--muted)}
+.about .more{display:inline-block;margin-top:24px}
+footer{margin-top:120px;border-top:1px solid var(--ink)}
+.foot{display:flex;justify-content:space-between;align-items:center;padding:28px 48px;font-size:14px}
+.foot nav{display:flex;gap:28px}
+
+
+
+/* about: ảnh + bio kiểu Yan Holtz */
+.intro-bio{padding:112px 0 24px}
+.bio{display:grid;grid-template-columns:260px 1fr;gap:64px;align-items:start}
+.avatar{width:260px;height:260px;object-fit:cover;display:block;background:var(--rule)}
+.bio-text p{font-size:18px;line-height:1.7;margin:0 0 16px;max-width:720px}
+.bio-text a{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.bio-text strong{font-weight:600}
+.bio-links{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+.bio-links .btn{text-decoration:none}
+/* timeline ngang: vai trò trên đường, nơi chốn dưới đường, năm ở các nút */
+.htl{list-style:none;padding:0;margin:72px 0 0;display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr auto 1fr;align-items:start}
+.htl li:not(.yr){position:relative;text-align:center;padding:0 12px}
+.htl li:not(.yr)::before{content:"";position:absolute;left:0;right:0;top:36px;border-top:1px solid var(--ink)}
+.htl b{height:36px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:10px;font-size:14px;font-weight:600}
+.htl i{display:block;font-size:13px;color:var(--muted);padding-top:12px}
+.htl .yr{position:relative;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;padding:50px 4px 0}
+.htl .yr::before{content:"";position:absolute;left:50%;top:36px;width:12px;height:12px;border-radius:50%;background:var(--accent);transform:translate(-50%,-50%)}
+@media (max-width:768px){
+  .bio{grid-template-columns:1fr;gap:28px}.avatar{width:180px;height:180px}
+  .htl{grid-template-columns:1fr;gap:6px}.htl li:not(.yr)::before{display:none}
+  .htl li:not(.yr){text-align:left;padding:0}.htl b{height:auto;display:block}.htl b,.htl i{padding:0}
+  .htl .yr{padding:10px 0 0 22px}.htl .yr::before{left:6px;top:calc(50% + 5px)}
+}
+
+/* certifications — lưới 3 cột */
+.certs{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.cert{display:block;background:var(--surface);border:1px solid var(--rule);padding:16px 16px 20px}
+.cert img{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:top;display:block;border:1px solid var(--rule);margin-bottom:18px}
+.cert h3{font-size:20px;font-weight:600;letter-spacing:-.015em;margin:0}
+.cert:hover img{border-color:var(--ink)}
+@media (max-width:768px){ .certs{grid-template-columns:1fr} }
+/* logo mark Q_t — kiểu chữ toán */
+.mark{white-space:nowrap;flex-shrink:0;font-family:'STIX Two Text','Cambria Math','Times New Roman',serif;font-style:italic;font-weight:500;font-size:27px;line-height:1;letter-spacing:-.02em}
+.mark .scripts{position:relative;display:inline-block;width:.85em;height:1px;font-size:.6em;line-height:1}.mark .sup{position:absolute;left:.05em;bottom:.55em;font-family:'Cambria Math','STIX Two Math','Segoe UI Symbol',serif;font-style:normal}.mark .sub{position:absolute;left:.05em;top:-.45em;font-style:italic;color:var(--accent)}.mark .arg{font-family:'Cambria Math','STIX Two Math',serif;font-style:normal;margin-left:.06em;font-size:.82em}.ph{color:var(--muted);font-style:italic}
+/* experience / education — hàng kẻ kiểu Swiss: cột thời gian | nội dung */
+.timeline{list-style:none;padding:0;margin:0}
+.row{display:grid;grid-template-columns:220px 1fr;gap:40px;border-top:1px solid var(--rule);padding:32px 0}
+.when{font-size:14px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.6}
+.when span{display:block;color:var(--muted);font-weight:400}
+.what h3{font-size:26px;font-weight:600;letter-spacing:-.02em;line-height:1.25;margin:0}
+.org{font-size:16px;color:var(--muted);margin:6px 0 0}
+.what ul{margin:18px 0 0;padding-left:18px;font-size:16px;line-height:1.6}
+.what ul ul{margin:4px 0 6px;list-style:circle}
+.what li+li{margin-top:6px}
+.wrap{padding-bottom:120px}
+@media (max-width:768px){ .row{grid-template-columns:1fr;gap:8px} .what h3{font-size:21px} }
+@media (max-width:768px){
+  .nav{padding:0 20px}.links{gap:12px;font-size:13px}.brand{margin-right:14px}.brand > span:not(.mark){display:none}
+  h1{font-size:48px}.tag{font-size:18px}
+  .facts{flex-direction:column;align-items:center;gap:6px;bottom:20px}.facts span+span{border:0;padding:0}
+  .wrap{padding:0 20px}.cards{grid-template-columns:1fr}
+  .posts li{grid-template-columns:1fr;gap:8px}.arrow{display:none}
+  h2{font-size:32px}.statement{font-size:24px}.foot{flex-direction:column;gap:16px;padding:24px 20px}
+}
+@media (max-width:380px){ .links{gap:9px;font-size:12px} .nav{padding:0 14px} }
+
+/* chuyển động theo cuộn: khối trượt lên khi xuất hiện; timeline vẽ từng đoạn, từng chấm */
+#fig{transition:opacity .15s linear}
+.js .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.js .reveal.in{opacity:1;transform:none}
+.js .htl li{opacity:0;transition:opacity .5s ease var(--d,0ms)}
+.js .htl li:not(.yr)::before{transform:scaleX(0);transform-origin:left;transition:transform .6s cubic-bezier(.2,.7,.2,1) var(--d,0ms)}
+.js .htl .yr::before{transform:translate(-50%,-50%) scale(0);transition:transform .4s cubic-bezier(.3,1.6,.5,1) var(--d,0ms)}
+.js .htl.in li{opacity:1}
+.js .htl.in li:not(.yr)::before{transform:scaleX(1)}
+.js .htl.in .yr::before{transform:translate(-50%,-50%) scale(1)}
+@media (prefers-reduced-motion: reduce){
+  .js .reveal,.js .htl li{opacity:1;transform:none;transition:none}
+  .js .htl li:not(.yr)::before{transform:none;transition:none}
+  .js .htl .yr::before{transform:translate(-50%,-50%);transition:none}
+}
+
+
+/* ===== mức 1: kiểu chữ Garamond + chi tiết theo taotajima.jp ===== */
+body{font-family:'EB Garamond',Garamond,'Times New Roman',serif;font-variant-numeric:lining-nums}
+.brand{font-size:18px;font-weight:600;letter-spacing:.02em}
+.links{font-size:17px;gap:0}
+.links a{letter-spacing:.02em}
+.links a + a::before{content:"/";color:var(--muted);margin:0 14px}
+.links .toggle{margin-left:24px}
+.over{font-style:italic;text-transform:none;letter-spacing:.04em;font-size:21px;font-weight:500}
+h1{font-weight:500;letter-spacing:0;font-size:98px;line-height:1.05}
+.tag{font-size:27px;font-style:italic}
+.btn{font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:13px 30px}
+.facts{font-style:italic;font-size:17px}
+.ph{font-size:20px}
+/* tiêu đề mục: #01 / Experience — số đứng liền chữ */
+.sec-h{display:flex;align-items:baseline}
+.sec-h > span:last-child{display:none}
+.idx{font-size:54px;line-height:1;font-style:italic;font-weight:500;color:var(--accent)}
+.idx::after{content:"/";color:var(--muted);font-style:normal;font-weight:400;margin:0 .28em}
+h2{font-size:54px;line-height:1;font-weight:500;letter-spacing:0}
+.what h3{font-size:31px;font-weight:500;letter-spacing:0}
+.org{font-style:italic;font-size:18px}
+.when{font-size:18px}
+.what ul{font-size:18px}
+.bio-text p{font-size:20px}
+.htl b{font-size:17px;font-weight:600}
+.htl i{font-size:16px}
+.htl .yr{font-size:18px}
+.cert h3{font-size:23px;font-weight:500}
+/* đường kẻ mảnh có mũi tên dẫn sang mục sau */
+.next{display:flex;justify-content:flex-end;margin-top:64px}
+.next a{position:relative;display:inline-block;width:min(380px,70%);padding:0 0 10px;text-align:right;font-style:italic;font-size:18px}
+.next a small{font-size:15px;color:var(--muted);margin-right:10px}
+.next a::after{content:"";position:absolute;left:0;right:0;bottom:0;border-top:1px solid var(--ink);transition:left .35s ease}
+.next a::before{content:"";position:absolute;right:0;bottom:-3px;border-left:10px solid var(--ink);border-top:3.5px solid transparent;border-bottom:3.5px solid transparent}
+.next a:hover::after{left:-40px}
+@media (max-width:768px){
+  h1{font-size:50px} .tag{font-size:20px} h2{font-size:38px} .idx{font-size:38px}
+  .links{font-size:14px} .links a + a::before{margin:0 7px} .links .toggle{margin-left:12px}
+  .what h3{font-size:24px}
+}
+@media (max-width:380px){ .links{font-size:13px} .links a + a::before{margin:0 5px} }
+@media (max-width:480px){ .toggle svg{width:54px;height:14px} .links .toggle{margin-left:8px} }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a class="brand" href="#hero" aria-label="Home">
+    <!-- mark: E^ℚ_t — kỳ vọng dưới độ đo rủi ro trung tính ℚ, với thông tin tới thời điểm t -->
+    <span class="mark" aria-hidden="true">E<span class="scripts"><span class="sup">ℚ</span><span class="sub">t</span></span></span>
+    <span>Quangtitative</span>
+  </a>
+  <nav class="links">
+    <a href="#about">About</a><a href="#experience">Experience</a><a href="#education">Education</a><a href="https://github.com/vn-quant" target="_blank" rel="noopener noreferrer">Blog</a>
+    <!-- toggle sáng/tối = một ngưỡng -->
+    <button class="toggle" id="toggle" aria-label="Toggle light/dark theme" title="Light / dark">
+      <!-- mặt trời | thanh gạt | mặt trăng -->
+      <svg width="70" height="18" viewBox="0 0 70 18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+        <circle cx="8" cy="9" r="3.2"/>
+        <path d="M8 1.6v1.8M8 14.6v1.8M.6 9h1.8M13.6 9h1.8M2.8 3.8l1.3 1.3M11.9 12.9l1.3 1.3M2.8 14.2l1.3-1.3M11.9 5.1l1.3-1.3"/>
+        <line x1="20" y1="9" x2="50" y2="9" stroke-width="1.5"/>
+        <circle id="knob" cx="27" cy="9" r="5" fill="var(--accent)" stroke="none"/>
+        <path d="M65.2 11.4A6 6 0 1 1 58.6 2.8a4.7 4.7 0 0 0 6.6 8.6z"/>
+      </svg>
+    </button>
+  </nav>
+</header>
+
+<section id="hero">
+  <canvas id="fig" role="img" aria-label="Background: 1,500 Monte Carlo paths of log asset value fanning out left to right, crossed by a dashed default threshold; paths ending below it are highlighted. Left edge: histogram of path end values on the same vertical axis, with the share below the threshold (5%) highlighted as the probability of default."></canvas>
+  <div class="intro">
+    <p class="over">Credit Risk Analytics &amp; Modeling</p>
+    <h1>Vũ Nhật Quang</h1>
+    <p class="tag">I measure, I model, I manage</p>
+    <div class="cta"><a class="btn primary" href="#experience">Experience</a><a class="btn" href="https://github.com/vn-quant" target="_blank" rel="noopener noreferrer">Blog</a></div>
+  </div>
+  <div class="facts">
+    <span>Risk Modeling · SeABank</span>
+    <span>Basel II/III · IFRS 9 · Quantitative Risk</span>
+    <span>MFE NEU &amp; ISFA Lyon 1</span>
+  </div>
+</section>
+
+<main class="wrap">
+  <section class="intro-bio" id="about">
+    <div class="bio">
+      <img class="avatar" src="https://avatars.githubusercontent.com/u/83815398?v=4" alt="Portrait of Vũ Nhật Quang" width="260" height="260">
+      <div class="bio-text">
+        <p>Hi, I'm Nhật Quang.</p>
+        <p>I'm a Risk Modeler at <a href="https://www.seabank.com.vn" target="_blank" rel="noopener noreferrer">SeABank</a>. I develop <strong>credit risk models</strong> and design the bank's <strong>Internal Credit Rating System</strong>: its scoring pipelines, data, governance and monitoring across retail and wholesale portfolios.</p>
+        <p>I studied <strong>Mathematical Economics</strong> (MFE) at the National Economics University (NEU) and <strong>Actuarial Science</strong> at ISFA, Université Claude Bernard Lyon 1.</p>
+        <p>I'm interested in <strong>Quantitative Trading</strong>, <strong>Probability</strong> and <strong>Financial Risk Management</strong>.</p>
+        <div class="bio-links">
+          <a class="btn" href="https://linkedin.com/in/vnquant" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a class="btn" href="https://github.com/vn-quant" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a class="btn primary" href="mailto:vunhatquanglhp99@gmail.com" target="_blank" rel="noopener noreferrer">Contact</a>
+        </div>
+      </div>
+    </div>
+    <ol class="htl" aria-label="Career timeline">
+      <li><b>Physics</b><i>Le Hong Phong High School</i></li>
+      <li class="yr">2017</li>
+      <li><b>Econometrics</b><i>NEU</i></li>
+      <li class="yr">2020</li>
+      <li><b>Actuarial Science</b><i>ISFA</i></li>
+      <li class="yr">2024</li>
+      <li><b>Risk Modeling Intern</b><i>VPBank</i></li>
+      <li class="yr">2025</li>
+      <li><b>Risk Modeling</b><i>SeABank</i></li>
+    </ol>
+    <div class="next"><a href="#experience"><small>01</small>Experience</a></div>
+  </section>
+  <section class="sec" id="experience">
+    <header class="sec-h"><span class="idx">01</span><h2>Experience</h2><span></span></header>
+    <ol class="timeline">
+      <li class="row">
+        <div class="when">Jun 2025 — Present<span>Hanoi</span></div>
+        <div class="what">
+          <h3>Risk Modeling</h3>
+          <p class="org">SeABank · Southeast Asia Commercial Joint Stock Bank</p>
+          <ul>
+            <li>Model development
+              <ul>
+                <li>A-Score for corporate credit rating — statistical and machine learning for SME, AHP for CBD</li>
+                <li>A-Score for retail customers</li>
+                <li>Early Warning System (EWS) for retail customers</li>
+              </ul>
+            </li>
+            <li>Design of the Internal Credit Rating System (ICRS) scoring pipelines and the surrounding data, governance and monitoring workflows across retail and wholesale portfolios</li>
+            <li>Partner model assessment with Women's World Banking: methodology, system and product risk review</li>
+            <li>Model governance: standardized model profile and centralized model inventory under Circular 83</li>
+          </ul>
+        </div>
+      </li>
+      <li class="row">
+        <div class="when">Sep 2024 — Dec 2024<span>Hanoi</span></div>
+        <div class="what">
+          <h3>Risk Modeling Intern</h3>
+          <p class="org">VPBank</p>
+          <ul>
+            <li>A-Score scorecard for consumer lending</li>
+            <li>ARIMA/SARIMA macroeconomic forecasting with automated model selection and out-of-sample validation</li>
+          </ul>
+        </div>
+      </li>
+    </ol>
+    <div class="next"><a href="#education"><small>02</small>Education</a></div>
+  </section>
+
+  <section class="sec" id="education">
+    <header class="sec-h"><span class="idx">02</span><h2>Education</h2><span></span></header>
+    <ol class="timeline">
+      <li class="row">
+        <div class="when">2020 — 2022<span>Hanoi</span></div>
+        <div class="what"><h3>ISFA Lyon 1 programme at NEU</h3><p class="org">Bachelor's degree (L3), Actuarial Science</p></div>
+      </li>
+      <li class="row">
+        <div class="when">2017 — 2022<span>Hanoi</span></div>
+        <div class="what"><h3>National Economics University (NEU), Vietnam</h3><p class="org">Bachelor's degree, Econometrics and Quantitative Economics</p></div>
+      </li>
+      <li class="row">
+        <div class="when">2014 — 2017<span>Nam Dinh</span></div>
+        <div class="what"><h3>Le Hong Phong High School for the Gifted</h3><p class="org">High School Diploma, Physics</p></div>
+      </li>
+    </ol>
+    <div class="next"><a href="#certifications"><small>03</small>Certifications</a></div>
+  </section>
+  <section class="sec" id="certifications">
+    <header class="sec-h"><span class="idx">03</span><h2>Certifications</h2><span></span></header>
+    <div class="certs">
+      <a class="cert" href="https://www.coursera.org/account/accomplishments/specialization/certificate/QRMN96LHVK7Q" target="_blank" rel="noopener noreferrer">
+        <img src="images/cert_google_data_analytics.jpg" alt="Google Data Analytics Professional Certificate" loading="lazy">
+        <h3>Google Data Analytics</h3><p class="org">Google · Coursera</p>
+      </a>
+      <a class="cert" href="https://www.hackerrank.com/certificates/81c2237d7468" target="_blank" rel="noopener noreferrer">
+        <img src="images/cert_hackerrank_sql_advanced.jpg" alt="HackerRank SQL (Advanced) certificate" loading="lazy">
+        <h3>SQL (Advanced)</h3><p class="org">HackerRank</p>
+      </a>
+      <a class="cert" href="https://www.hackerrank.com/certificates/e276ca9647d8" target="_blank" rel="noopener noreferrer">
+        <img src="images/cert_hackerrank_r_basic.jpg" alt="HackerRank R (Basic) certificate" loading="lazy">
+        <h3>R (Basic)</h3><p class="org">HackerRank</p>
+      </a>
+    </div>
+  </section>
+</main>
+
+<script>
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.documentElement.classList.add('js');
+
+/* ---------- dữ liệu: seed cố định ----------
+   Đơn vị chuẩn hoá: ln V_T ~ N(0, 1). Đường nợ ln D = phân vị 5% của lần mô phỏng đầu.
+   Chạm ln D bất kỳ lúc nào = vỡ nợ (first passage) → đường đỏ từ điểm chạm.               */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+const rnd = mulberry32(42);
+let spare = null;
+function gauss(){
+  if (spare !== null){ const s = spare; spare = null; return s; }
+  let u; do { u = rnd(); } while (u <= 1e-12);
+  const v = rnd(), r = Math.sqrt(-2 * Math.log(u));
+  spare = r * Math.sin(2 * Math.PI * v);
+  return r * Math.cos(2 * Math.PI * v);
+}
+
+const N = 1500, T = 80, CUTOFF = 0.05;
+function simPath(){
+  const x = new Float32Array(T + 1);
+  for (let t = 1; t <= T; t++) x[t] = x[t - 1] + gauss() / Math.sqrt(T);   // Brownian: x_T ~ N(0,1)
+  return x;
+}
+const cur = [], ends = new Float64Array(N);
+for (let i = 0; i < N; i++){ cur.push(simPath()); ends[i] = cur[i][T]; }
+const order = [...Array(N).keys()];
+for (let i = N - 1; i > 0; i--){ const j = Math.floor(rnd() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+
+const phi = x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);
+const sortedEnds = Float64Array.from(ends).sort(), K_CUT = Math.round(CUTOFF * N);
+const B = (sortedEnds[K_CUT - 1] + sortedEnds[K_CUT]) / 2;    // ln D
+const BIN = 0.165, BIN_LO = B - Math.ceil((B + 3.6) / BIN) * BIN, NBIN = Math.ceil((3.6 - BIN_LO) / BIN);
+const binOf = v => Math.floor((v - BIN_LO) / BIN);
+const hist = new Float64Array(NBIN), histShown = new Float64Array(NBIN);
+for (const e of ends){ const k = binOf(e); if (k >= 0 && k < NBIN) hist[k]++; }
+histShown.set(hist);
+const D_MAX = Math.max(phi(0), Math.max(...hist) / (N * BIN));
+const firstHit = x => { for (let t = 1; t <= T; t++) if (x[t] < B) return t; return -1; };
+const hitIdx = new Int16Array(N);
+for (let i = 0; i < N; i++) hitIdx[i] = firstHit(cur[i]);
+
+/* ---------- hình học + màu ---------- */
+const cv = document.getElementById('fig'), ctx = cv.getContext('2d');
+const hero = document.getElementById('hero');
+let W, H, C = {}, G = null, scrollF = 0;
+const clamp01 = x => Math.max(0, Math.min(1, x));
+const ease = x => 1 - (1 - x) ** 3;
+const smooth = x => x * x * (3 - 2 * x);
+const TEXT = ['.over', 'h1', '.tag', '.cta'];
+
+function colors(){
+  const cs = getComputedStyle(document.documentElement), g = k => cs.getPropertyValue(k).trim();
+  C = { ink:g('--ink'), accent:g('--accent'), hot:g('--hot'), path:g('--path'), pathA:+g('--path-a'), hotA:+g('--hot-a') };
+}
+function rgba(hex, a){ const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; }
+function size(){
+  const r = cv.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+  W = r.width; H = r.height;
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+const textRects = () => { const base = cv.getBoundingClientRect();
+  return TEXT.map(s => { const r = document.querySelector(s).getBoundingClientRect();
+    return { x:r.left - base.left, y:r.top - base.top, w:r.width, h:r.height }; }); };
+
+const MX = new Float32Array(T + 1);
+function geom(){
+  // thang dọc của quạt: đường nợ ln D đi qua đúng giữa chiều cao nút Primary CTA
+  const top = 64 + 52, rects = textRects(), cta = rects[3];
+  const yCta = cta.y + cta.h / 2, fracB = 1 - (B + 3.4) / 6.8;
+  const fanH = Math.min((yCta - top) / fracB, H - 60 - top);
+  G = { wide:W >= 900, M:{ x:-W * .02, y:yCta - fracB * fanH, w:W * 1.04, h:fanH },
+        xMax:Math.min(W / 3, Math.min(...rects.map(r => r.x)) - 32), rects };
+  for (let t = 0; t <= T; t++) MX[t] = G.M.x + (t / T) * G.M.w;
+}
+const my = x => G.M.y + (1 - (x + 3.4) / 6.8) * G.M.h;
+function knockout(){               // đường nợ đi "phía sau" chữ và nút
+  const clip = new Path2D(); clip.rect(0, 0, W, H);
+  for (const r of G.rects) clip.rect(r.x - 16, r.y - 8, r.w + 32, r.h + 16);
+  return clip;
+}
+
+/* ---------- histogram + đường nợ ---------- */
+function drawHist(scale, now){
+  if (!G.wide || scale <= 0) return;
+  const hx = d => Math.min((d / D_MAX) * G.xMax, G.xMax * 1.08) * scale;
+  for (let k = 0; k < NBIN; k++){
+    const lo = BIN_LO + k * BIN, d = histShown[k] / (N * BIN);
+    ctx.fillStyle = lo < B ? rgba(C.accent, .32) : `rgba(${C.path},0.08)`;
+    ctx.fillRect(0, my(lo + BIN) + .5, hx(d), my(lo) - my(lo + BIN) - 1);
+  }
+  ctx.beginPath();
+  for (let v = -3.6; v <= 3.6; v += .02){ const X = hx(phi(v)), Y = my(v); v === -3.6 ? ctx.moveTo(X, Y) : ctx.lineTo(X, Y); }
+  ctx.strokeStyle = rgba(C.ink, .35); ctx.lineWidth = 1.2; ctx.stroke();
+}
+function drawLine(p){
+  if (p <= 0) return;
+  ctx.save(); ctx.clip(knockout(), 'evenodd');
+  ctx.strokeStyle = rgba(C.accent, .7); ctx.lineWidth = 1.2; ctx.setLineDash([7, 6]);
+  ctx.beginPath(); ctx.moveTo(0, my(B)); ctx.lineTo(W * p, my(B)); ctx.stroke();
+  ctx.restore();
+}
+
+/* ---------- pha 1: xuất hiện lúc tải trang ---------- */
+function revealFrame(p){
+  const fanP = clamp01(p / .6), lineP = ease(clamp01((p - .5) / .25)), histP = ease(clamp01((p - .6) / .4));
+  ctx.clearRect(0, 0, W, H);
+  const grey = new Path2D(), hot = new Path2D();
+  for (let k = 0; k < N; k++){
+    const i = order[k], n = Math.floor(clamp01((fanP - .5 * (k / N)) / .5) * T), x = cur[i];
+    if (n < 1) continue;
+    grey.moveTo(MX[0], my(x[0])); for (let t = 1; t <= n; t++) grey.lineTo(MX[t], my(x[t]));
+    const h = hitIdx[i];
+    if (lineP > 0 && h >= 0 && n >= h){ hot.moveTo(MX[0], my(x[0])); for (let t = 1; t <= n; t++) hot.lineTo(MX[t], my(x[t])); }
+  }
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = `rgba(${C.path},${C.pathA})`; ctx.stroke(grey);
+  ctx.strokeStyle = rgba(C.hot, C.hotA * lineP); ctx.stroke(hot);
+  drawHist(histP, performance.now());
+  drawLine(lineP);
+}
+
+/* ---------- pha 2: quạt "thở" + hạt chảy ----------
+   B — mỗi đường uốn dần sang một đường mới:  x = cos θ · cũ + sin θ · mới,  θ: 0 → π/2.
+       Hai đường Brown độc lập ⇒ cos²θ + sin²θ = 1 ⇒ đường đang uốn vẫn là đường Brown hợp lệ;
+       quạt không co lại, histogram vẫn là N(0,1).
+*/
+// Không cho cả 1500 đường uốn cùng lúc (vẽ lại 120k đoạn mỗi khung là quá nặng):
+// cứ COH_EVERY ms chọn một đợt COHORT đường để uốn; phần còn lại nằm trong lớp nền tĩnh `cache`,
+// chỉ dựng lại khi bắt đầu đợt mới.
+const COHORT = 90, COH_EVERY = 3000;
+const tgt = new Array(N).fill(null), CS = new Float32Array(N).fill(1), SN = new Float32Array(N);
+const hitNow = new Int16Array(N), active = new Map(), pending = [];
+const cache = document.createElement('canvas'), cctx = cache.getContext('2d');
+const staticHist = new Float64Array(NBIN);
+let lastNow = 0, lastCohort = -1e9;
+
+const val = (i, t) => tgt[i] ? CS[i] * cur[i][t] + SN[i] * tgt[i][t] : cur[i][t];
+function rebuildCache(){
+  cache.width = cv.width; cache.height = cv.height;
+  cctx.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0);
+  const grey = new Path2D(), hot = new Path2D();
+  staticHist.fill(0);
+  for (let i = 0; i < N; i++){
+    if (active.has(i)) continue;
+    const x = cur[i], h = firstHit(x); hitNow[i] = h;
+    if (h < 0){ grey.moveTo(MX[0], my(x[0])); for (let t = 1; t <= T; t++) grey.lineTo(MX[t], my(x[t])); }
+    else{ hot.moveTo(MX[0], my(x[0])); for (let t = 1; t <= T; t++) hot.lineTo(MX[t], my(x[t])); }
+    const k = binOf(x[T]); if (k >= 0 && k < NBIN) staticHist[k]++;
+  }
+  cctx.lineWidth = 1;
+  cctx.strokeStyle = `rgba(${C.path},${C.pathA})`; cctx.stroke(grey);
+  cctx.strokeStyle = rgba(C.hot, C.hotA); cctx.stroke(hot);
+  pending.length = 0;
+}
+function newCohort(now){
+  for (let n = 0, guard = 0; n < COHORT && guard < 5 * COHORT; guard++){
+    const i = Math.floor(rnd() * N);
+    if (active.has(i)) continue;
+    tgt[i] = simPath();
+    active.set(i, { th0:now + rnd() * 1500, per:6000 + rnd() * 4000 });
+    n++;
+  }
+  rebuildCache();
+}
+function startLive(now){
+  lastNow = now; lastCohort = now; newCohort(now);
+}
+
+function liveFrame(now){
+  lastNow = now;
+  if (now - lastCohort >= COH_EVERY){ lastCohort = now; newCohort(now); }
+  ctx.clearRect(0, 0, W, H);
+  ctx.drawImage(cache, 0, 0, W, H);
+  hist.set(staticHist);
+  const grey = new Path2D(), hot = new Path2D();
+  const YB = new Float32Array(T + 1);               // toạ độ y của đường đang vẽ
+  const tracePath = (i, c, s) => {
+    const a = cur[i], b = tgt[i];
+    let h = -1, v = 0;
+    YB[0] = my(0);
+    for (let t = 1; t <= T; t++){
+      v = s ? c * a[t] + s * b[t] : a[t];
+      YB[t] = my(v);
+      if (h < 0 && v < B) h = t;
+    }
+    // đường đã chạm ngưỡng thì đỏ từ gốc
+    const target = h >= 0 ? hot : grey;
+    target.moveTo(MX[0], YB[0]); for (let t = 1; t <= T; t++) target.lineTo(MX[t], YB[t]);
+    hitNow[i] = h;
+    const kb = binOf(v); if (kb >= 0 && kb < NBIN) hist[kb]++;
+  };
+  // B — đường đang uốn:  x = cos θ · cũ + sin θ · mới  (θ: 0 → π/2, vẫn là đường Brown hợp lệ)
+  for (const [i, m] of active){
+    const k = clamp01((now - m.th0) / m.per);
+    if (k >= 1){ cur[i] = tgt[i]; tgt[i] = null; CS[i] = 1; SN[i] = 0; active.delete(i); pending.push(i); continue; }
+    const th = Math.PI / 2 * smooth(k);
+    CS[i] = Math.cos(th); SN[i] = Math.sin(th);
+    tracePath(i, CS[i], SN[i]);
+  }
+  for (const i of pending) tracePath(i, 1, 0);      // vừa uốn xong, chờ vào lớp nền ở đợt sau
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = `rgba(${C.path},${C.pathA})`; ctx.stroke(grey);
+  ctx.strokeStyle = rgba(C.hot, C.hotA); ctx.stroke(hot);
+  for (let k = 0; k < NBIN; k++) histShown[k] += (hist[k] - histShown[k]) * .05;
+
+  drawHist(1 - .85 * scrollF, now);
+  drawLine(1);
+}
+
+/* ---------- vòng lặp: chỉ chạy khi hero đang hiện và tab đang mở ---------- */
+let phase = 'reveal', t0 = null, rafId = 0, heroVisible = true, started = false;
+function loop(now){
+  rafId = 0;
+  if (phase === 'reveal'){
+    if (t0 === null) t0 = now;
+    const p = clamp01((now - t0) / 2400);
+    revealFrame(p);
+    if (p >= 1){ phase = 'live'; startLive(now); }
+  } else {
+    if (now - lastNow > 200){                      // vừa tạm dừng xong: dời mốc thời gian, không nhảy cóc
+      const gap = now - lastNow; for (const m of active.values()) m.th0 += gap; lastCohort += gap; lastNow = now;
+    }
+    liveFrame(now);
+  }
+  schedule();
+}
+function schedule(){
+  if (started && !rafId && !REDUCED && heroVisible && !document.hidden) rafId = requestAnimationFrame(loop);
+}
+function still(){ if (!started) return; if (phase === 'live') rebuildCache(); if (rafId) return; phase === 'live' ? liveFrame(lastNow) : revealFrame(1); }
+
+/* ---------- cuộn: quạt mờ dần, histogram thu lại ---------- */
+function onScroll(){
+  scrollF = clamp01(scrollY / (hero.offsetHeight * .7));
+  cv.style.opacity = REDUCED ? 1 : 1 - .75 * scrollF;
+}
+addEventListener('scroll', onScroll, { passive:true });
+new IntersectionObserver(es => { heroVisible = es[0].isIntersecting; schedule(); }).observe(hero);
+document.addEventListener('visibilitychange', schedule);
+
+/* ---------- các khối bên dưới trượt lên khi xuất hiện ---------- */
+if (!REDUCED){
+  const groups = [['.bio'], ['.sec-h'], ['#experience .row', '#education .row'], ['.cert']];
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { threshold:.15, rootMargin:'0px 0px -8% 0px' });
+  for (const sels of groups) for (const sel of sels){
+    document.querySelectorAll(sel).forEach((el, k) => {
+      el.classList.add('reveal'); el.style.transitionDelay = `${Math.min(k, 4) * 90}ms`; io.observe(el);
+    });
+  }
+  const htl = document.querySelector('.htl');      // timeline: từng đoạn, từng chấm
+  htl.querySelectorAll('li').forEach((li, k) => li.style.setProperty('--d', `${k * 110}ms`));
+  io.observe(htl);
+}
+
+/* ---------- giao diện sáng/tối, resize, khởi động ---------- */
+document.getElementById('toggle').addEventListener('click', () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark';
+  document.getElementById('knob').setAttribute('cx', dark ? 27 : 43);
+  colors(); still();
+});
+if (matchMedia('(prefers-color-scheme: dark)').matches) document.getElementById('knob').setAttribute('cx', 43);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { colors(); still(); });
+let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { size(); colors(); geom(); still(); }, 150); });
+document.fonts.ready.then(() => {
+  size(); colors(); geom(); onScroll(); started = true;
+  if (REDUCED) revealFrame(1); else schedule();
+});
+</script>
+</body>
+</html>
