@@ -14,15 +14,15 @@
 :root{
   /* bộ màu: nền xám, thành phần trắng – đen – đỏ */
   --paper:#EBEBEB; --surface:#FFFFFF; --ink:#111111; --muted:#5F5F5F; --rule:#D2D2D2; --path:17,17,17; --path-a:.035; --accent:#D7191F; --hot:#8E1418; --hot-a:.14;
-  --nav-h:64px; color-scheme:light;
+  --nav-h:64px; --rev:#D9922E; color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --paper:#202020; --surface:#141414; --ink:#F2F2F2; --muted:#A3A3A3; --rule:#3A3A3A; --path:242,242,242; --path-a:.012; --accent:#F0383E; --hot:#FF9C9C; --hot-a:.16; color-scheme:dark;
+    --paper:#202020; --surface:#141414; --ink:#F2F2F2; --muted:#A3A3A3; --rule:#3A3A3A; --path:242,242,242; --path-a:.012; --accent:#F0383E; --hot:#FF9C9C; --hot-a:.16; --rev:#E8A84A; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --paper:#202020; --surface:#141414; --ink:#F2F2F2; --muted:#A3A3A3; --rule:#3A3A3A; --path:242,242,242; --path-a:.012; --accent:#F0383E; --hot:#FF9C9C; --hot-a:.16; color-scheme:dark;
+  --paper:#202020; --surface:#141414; --ink:#F2F2F2; --muted:#A3A3A3; --rule:#3A3A3A; --path:242,242,242; --path-a:.012; --accent:#F0383E; --hot:#FF9C9C; --hot-a:.16; --rev:#E8A84A; color-scheme:dark;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -195,6 +195,17 @@ h2{font-size:54px;line-height:1;font-weight:500;letter-spacing:0}
 }
 @media (max-width:380px){ .links{font-size:13px} .links a + a::before{margin:0 5px} }
 @media (max-width:480px){ .toggle svg{width:54px;height:14px} .links .toggle{margin-left:8px} }
+/* mục 03 Blog: mỗi bài một hàng, ảnh đại diện bên trái (hình trong bài, SVG theo màu của trang) */
+.post{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:center;border-top:1px solid var(--rule);padding:32px 0}
+.post-fig{display:block;width:100%;height:auto;background:var(--surface);border:1px solid var(--rule);padding:8px}
+.post .when{font-size:18px;font-variant-numeric:tabular-nums}
+.post .when span{display:inline;margin-left:12px;font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.post h3{font-size:31px;font-weight:500;line-height:1.25;margin:12px 0 0}
+.post p{font-size:19px;font-style:italic;color:var(--muted);line-height:1.5;margin:10px 0 0}
+.post .more{display:inline-block;margin-top:20px;font-size:17px}
+.post:hover h3{color:var(--accent)}
+.all-posts{display:inline-block;margin-top:8px;font-style:italic;font-size:18px;border-bottom:1px solid var(--ink);padding-bottom:2px}
+@media (max-width:768px){ .post{grid-template-columns:1fr;gap:20px} .post h3{font-size:24px} }
 </style>
 </head>
 <body>
@@ -318,10 +329,485 @@ h2{font-size:54px;line-height:1;font-weight:500;letter-spacing:0}
         <div class="what"><h3>Le Hong Phong High School for the Gifted</h3><p class="org">High School Diploma, Physics</p></div>
       </li>
     </ol>
-    <div class="next"><a href="#certifications"><small>03</small>Certifications</a></div>
+    <div class="next"><a href="#blog"><small>03</small>Blog</a></div>
   </section>
+
+  <section class="sec" id="blog">
+    <header class="sec-h"><span class="idx">03</span><h2>Blog</h2><span></span></header>
+    <a class="post" href="blog/ascore-home-credit/">
+      <svg class="post-fig" role="img" aria-label="Phân phối hồ sơ và bad rate theo hạng AAA đến D" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 518.4 331.2" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<defs>
+</defs>
+<g id="home_ascore_figure_1">
+<g id="home_ascore_patch_1">
+<path d="M 0 331.2 
+L 518.4 331.2 
+L 518.4 0 
+L 0 0 
+L 0 331.2 
+z
+" style="fill: none"/>
+</g>
+<g id="home_ascore_axes_1">
+<g id="home_ascore_patch_2">
+<path d="M 71.162182 281.52 
+L 96.068113 281.52 
+L 96.068113 262.779939 
+L 71.162182 262.779939 
+z
+" clip-path="url(#home_ascore_p8e6d040b8b)" style="fill: var(--rule)"/>
+</g>
+<g id="home_ascore_patch_3">
+<path d="M 111.333038 281.52 
+L 136.238969 281.52 
+L 136.238969 245.853682 
+L 111.333038 245.853682 
+z
+" clip-path="url(#home_ascore_p8e6d040b8b)" style="fill: var(--rule)"/>
+</g>
+<g id="home_ascore_patch_4">
+<path d="M 151.503894 281.52 
+L 176.409825 281.52 
+L 176.409825 205.13046 
+L 151.503894 205.13046 
+z
+" clip-path="url(#home_ascore_p8e6d040b8b)" style="fill: var(--rule)"/>
+</g>
+<g id="home_ascore_patch_5">
+<path d="M 191.67475 281.52 
+L 216.580681 281.52 
+L 216.580681 156.406301 
+L 191.67475 156.406301 
+z
+" clip-path="url(#home_ascore_p8e6d040b8b)" style="fill: var(--rule)"/>
+</g>
+<g id="home_ascore_patch_6">
+<path d="M 231.845607 281.52 
+L 256.751537 281.52 
+L 256.751537 122.891691 
+L 231.845607 122.891691 
+z
+" clip-path="url(#home_ascore_p8e6d040b8b)" style="fill: var(--rule)"/>
+</g>
+<g id="home_ascore_patch_7">
+<path d="M 272.016463 281.52 
+L 296.922393 281.52 
+L 296.922393 121.540076 
+L 272.016463 121.540076 
+z
+" clip-path="url(#home_ascore_p8e6d040b8b)" style="fill: var(--rule)"/>
+</g>
+<g id="home_ascore_patch_8">
+<path d="M 312.187319 281.52 
+L 337.09325 281.52 
+L 337.09325 158.744439 
+L 312.187319 158.744439 
+z
+" clip-path="url(#home_ascore_p8e6d040b8b)" style="fill: var(--rule)"/>
+</g>
+<g id="home_ascore_patch_9">
+<path d="M 352.358175 281.52 
+L 377.264106 281.52 
+L 377.264106 206.035421 
+L 352.358175 206.035421 
+z
+" clip-path="url(#home_ascore_p8e6d040b8b)" style="fill: var(--rule)"/>
+</g>
+<g id="home_ascore_patch_10">
+<path d="M 392.529031 281.52 
+L 417.434962 281.52 
+L 417.434962 245.127383 
+L 392.529031 245.127383 
+z
+" clip-path="url(#home_ascore_p8e6d040b8b)" style="fill: var(--rule)"/>
+</g>
+<g id="home_ascore_patch_11">
+<path d="M 432.699887 281.52 
+L 457.605818 281.52 
+L 457.605818 262.690608 
+L 432.699887 262.690608 
+z
+" clip-path="url(#home_ascore_p8e6d040b8b)" style="fill: var(--rule)"/>
+</g>
+<g id="home_ascore_matplotlib.axis_1">
+<g id="home_ascore_ytick_1">
+<g id="home_ascore_line2d_1"/>
+<g id="home_ascore_text_1">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: start; fill: var(--muted)" x="480.428" y="285.699141" transform="rotate(-0 480.428 285.699141)">0%</text>
+</g>
+</g>
+<g id="home_ascore_ytick_2">
+<g id="home_ascore_line2d_2"/>
+<g id="home_ascore_text_2">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: start; fill: var(--muted)" x="480.428" y="202.899141" transform="rotate(-0 480.428 202.899141)">10%</text>
+</g>
+</g>
+<g id="home_ascore_ytick_3">
+<g id="home_ascore_line2d_3"/>
+<g id="home_ascore_text_3">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: start; fill: var(--muted)" x="480.428" y="120.099141" transform="rotate(-0 480.428 120.099141)">20%</text>
+</g>
+</g>
+<g id="home_ascore_text_4">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="517.2355" y="182.16" transform="rotate(-90 517.2355 182.16)">% hồ sơ</text>
+</g>
+</g>
+<g id="home_ascore_patch_12">
+<path d="M 51.84 281.52 
+L 51.84 82.8 
+" style="fill: none; stroke: var(--rule); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+</g>
+<g id="home_ascore_patch_13">
+<path d="M 51.84 281.52 
+L 476.928 281.52 
+" style="fill: none; stroke: var(--rule); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+</g>
+<g id="home_ascore_text_5">
+<text style="font-size: 10px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="83.615147" y="259.467939" transform="rotate(-0 83.615147 259.467939)">2%</text>
+</g>
+<g id="home_ascore_text_6">
+<text style="font-size: 10px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="123.786003" y="242.541682" transform="rotate(-0 123.786003 242.541682)">4%</text>
+</g>
+<g id="home_ascore_text_7">
+<text style="font-size: 10px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="163.95686" y="201.81846" transform="rotate(-0 163.95686 201.81846)">9%</text>
+</g>
+<g id="home_ascore_text_8">
+<text style="font-size: 10px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="204.127716" y="153.094301" transform="rotate(-0 204.127716 153.094301)">15%</text>
+</g>
+<g id="home_ascore_text_9">
+<text style="font-size: 10px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="244.298572" y="119.579691" transform="rotate(-0 244.298572 119.579691)">19%</text>
+</g>
+<g id="home_ascore_text_10">
+<text style="font-size: 10px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="284.469428" y="118.228076" transform="rotate(-0 284.469428 118.228076)">19%</text>
+</g>
+<g id="home_ascore_text_11">
+<text style="font-size: 10px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="324.640284" y="155.432439" transform="rotate(-0 324.640284 155.432439)">15%</text>
+</g>
+<g id="home_ascore_text_12">
+<text style="font-size: 10px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="364.81114" y="202.723421" transform="rotate(-0 364.81114 202.723421)">9%</text>
+</g>
+<g id="home_ascore_text_13">
+<text style="font-size: 10px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="404.981997" y="241.815383" transform="rotate(-0 404.981997 241.815383)">4%</text>
+</g>
+<g id="home_ascore_text_14">
+<text style="font-size: 10px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="445.152853" y="259.378608" transform="rotate(-0 445.152853 259.378608)">2%</text>
+</g>
+</g>
+<g id="home_ascore_axes_2">
+<g id="home_ascore_matplotlib.axis_2">
+<g id="home_ascore_xtick_1">
+<g id="home_ascore_line2d_4"/>
+<g id="home_ascore_text_15">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="83.615147" y="293.378281" transform="rotate(-0 83.615147 293.378281)">AAA</text>
+</g>
+</g>
+<g id="home_ascore_xtick_2">
+<g id="home_ascore_line2d_5"/>
+<g id="home_ascore_text_16">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="123.786003" y="293.378281" transform="rotate(-0 123.786003 293.378281)">AA</text>
+</g>
+</g>
+<g id="home_ascore_xtick_3">
+<g id="home_ascore_line2d_6"/>
+<g id="home_ascore_text_17">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="163.95686" y="293.378281" transform="rotate(-0 163.95686 293.378281)">A</text>
+</g>
+</g>
+<g id="home_ascore_xtick_4">
+<g id="home_ascore_line2d_7"/>
+<g id="home_ascore_text_18">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="204.127716" y="293.378281" transform="rotate(-0 204.127716 293.378281)">BBB</text>
+</g>
+</g>
+<g id="home_ascore_xtick_5">
+<g id="home_ascore_line2d_8"/>
+<g id="home_ascore_text_19">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="244.298572" y="293.378281" transform="rotate(-0 244.298572 293.378281)">BB</text>
+</g>
+</g>
+<g id="home_ascore_xtick_6">
+<g id="home_ascore_line2d_9"/>
+<g id="home_ascore_text_20">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="284.469428" y="293.378281" transform="rotate(-0 284.469428 293.378281)">B</text>
+</g>
+</g>
+<g id="home_ascore_xtick_7">
+<g id="home_ascore_line2d_10"/>
+<g id="home_ascore_text_21">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="324.640284" y="293.378281" transform="rotate(-0 324.640284 293.378281)">CCC</text>
+</g>
+</g>
+<g id="home_ascore_xtick_8">
+<g id="home_ascore_line2d_11"/>
+<g id="home_ascore_text_22">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="364.81114" y="293.378281" transform="rotate(-0 364.81114 293.378281)">CC</text>
+</g>
+</g>
+<g id="home_ascore_xtick_9">
+<g id="home_ascore_line2d_12"/>
+<g id="home_ascore_text_23">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="404.981997" y="293.378281" transform="rotate(-0 404.981997 293.378281)">C</text>
+</g>
+</g>
+<g id="home_ascore_xtick_10">
+<g id="home_ascore_line2d_13"/>
+<g id="home_ascore_text_24">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="445.152853" y="293.378281" transform="rotate(-0 445.152853 293.378281)">D</text>
+</g>
+</g>
+<g id="home_ascore_text_25">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="264.384" y="309.033125" transform="rotate(-0 264.384 309.033125)">hạng, từ rủi ro thấp đến cao</text>
+</g>
+</g>
+<g id="home_ascore_matplotlib.axis_3">
+<g id="home_ascore_ytick_4">
+<g id="home_ascore_line2d_14">
+<path d="M 51.84 281.52 
+L 476.928 281.52 
+" clip-path="url(#home_ascore_p22ec8d3d08)" style="fill: none; stroke: var(--rule); stroke-width: 0.6; stroke-linecap: round"/>
+</g>
+<g id="home_ascore_line2d_15"/>
+<g id="home_ascore_text_26">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: end; fill: var(--muted)" x="48.34" y="285.699141" transform="rotate(-0 48.34 285.699141)">0%</text>
+</g>
+</g>
+<g id="home_ascore_ytick_5">
+<g id="home_ascore_line2d_16">
+<path d="M 51.84 231.84 
+L 476.928 231.84 
+" clip-path="url(#home_ascore_p22ec8d3d08)" style="fill: none; stroke: var(--rule); stroke-width: 0.6; stroke-linecap: round"/>
+</g>
+<g id="home_ascore_line2d_17"/>
+<g id="home_ascore_text_27">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: end; fill: var(--muted)" x="48.34" y="236.019141" transform="rotate(-0 48.34 236.019141)">5%</text>
+</g>
+</g>
+<g id="home_ascore_ytick_6">
+<g id="home_ascore_line2d_18">
+<path d="M 51.84 182.16 
+L 476.928 182.16 
+" clip-path="url(#home_ascore_p22ec8d3d08)" style="fill: none; stroke: var(--rule); stroke-width: 0.6; stroke-linecap: round"/>
+</g>
+<g id="home_ascore_line2d_19"/>
+<g id="home_ascore_text_28">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: end; fill: var(--muted)" x="48.34" y="186.339141" transform="rotate(-0 48.34 186.339141)">10%</text>
+</g>
+</g>
+<g id="home_ascore_ytick_7">
+<g id="home_ascore_line2d_20">
+<path d="M 51.84 132.48 
+L 476.928 132.48 
+" clip-path="url(#home_ascore_p22ec8d3d08)" style="fill: none; stroke: var(--rule); stroke-width: 0.6; stroke-linecap: round"/>
+</g>
+<g id="home_ascore_line2d_21"/>
+<g id="home_ascore_text_29">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: end; fill: var(--muted)" x="48.34" y="136.659141" transform="rotate(-0 48.34 136.659141)">15%</text>
+</g>
+</g>
+<g id="home_ascore_ytick_8">
+<g id="home_ascore_line2d_22">
+<path d="M 51.84 82.8 
+L 476.928 82.8 
+" clip-path="url(#home_ascore_p22ec8d3d08)" style="fill: none; stroke: var(--rule); stroke-width: 0.6; stroke-linecap: round"/>
+</g>
+<g id="home_ascore_line2d_23"/>
+<g id="home_ascore_text_30">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: end; fill: var(--muted)" x="48.34" y="86.979141" transform="rotate(-0 48.34 86.979141)">20%</text>
+</g>
+</g>
+<g id="home_ascore_text_31">
+<text style="font-size: 11px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: middle; fill: var(--muted)" x="17.603125" y="182.16" transform="rotate(-90 17.603125 182.16)">bad rate</text>
+</g>
+</g>
+<g id="home_ascore_line2d_24">
+<path d="M 83.615147 278.637016 
+L 123.786003 278.165802 
+L 163.95686 276.821769 
+L 204.127716 273.0994 
+L 244.298572 267.896377 
+L 284.469428 258.145433 
+L 324.640284 237.797954 
+L 364.81114 209.792663 
+L 404.981997 172.086147 
+L 445.152853 113.665545 
+" clip-path="url(#home_ascore_p22ec8d3d08)" style="fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round"/>
+<defs>
+<path id="home_ascore_mc2ad0af2a2" d="M 0 2.5 
+C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767 
+C 2.236584 1.29895 2.5 0.663008 2.5 0 
+C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767 
+C 1.29895 -2.236584 0.663008 -2.5 0 -2.5 
+C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767 
+C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0 
+C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767 
+C -1.29895 2.236584 -0.663008 2.5 0 2.5 
+z
+" style="stroke: #000000; stroke-opacity: 0"/>
+</defs>
+<g clip-path="url(#home_ascore_p22ec8d3d08)">
+<use xlink:href="#home_ascore_mc2ad0af2a2" x="83.615147" y="278.637016" style="fill: var(--ink); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_mc2ad0af2a2" x="123.786003" y="278.165802" style="fill: var(--ink); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_mc2ad0af2a2" x="163.95686" y="276.821769" style="fill: var(--ink); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_mc2ad0af2a2" x="204.127716" y="273.0994" style="fill: var(--ink); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_mc2ad0af2a2" x="244.298572" y="267.896377" style="fill: var(--ink); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_mc2ad0af2a2" x="284.469428" y="258.145433" style="fill: var(--ink); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_mc2ad0af2a2" x="324.640284" y="237.797954" style="fill: var(--ink); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_mc2ad0af2a2" x="364.81114" y="209.792663" style="fill: var(--ink); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_mc2ad0af2a2" x="404.981997" y="172.086147" style="fill: var(--ink); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_mc2ad0af2a2" x="445.152853" y="113.665545" style="fill: var(--ink); stroke: #000000; stroke-opacity: 0"/>
+</g>
+</g>
+<g id="home_ascore_line2d_25">
+<path d="M 83.615147 276.489553 
+L 123.786003 276.092026 
+L 163.95686 273.522097 
+L 204.127716 269.277387 
+L 244.298572 261.082454 
+L 284.469428 247.975426 
+L 324.640284 226.214864 
+L 364.81114 185.683527 
+L 404.981997 145.479922 
+L 445.152853 95.228142 
+" clip-path="url(#home_ascore_p22ec8d3d08)" style="fill: none; stroke: var(--rev); stroke-width: 2; stroke-linecap: round"/>
+<defs>
+<path id="home_ascore_m29ac8959eb" d="M 0 2.5 
+C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767 
+C 2.236584 1.29895 2.5 0.663008 2.5 0 
+C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767 
+C 1.29895 -2.236584 0.663008 -2.5 0 -2.5 
+C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767 
+C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0 
+C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767 
+C -1.29895 2.236584 -0.663008 2.5 0 2.5 
+z
+" style="stroke: #000000; stroke-opacity: 0"/>
+</defs>
+<g clip-path="url(#home_ascore_p22ec8d3d08)">
+<use xlink:href="#home_ascore_m29ac8959eb" x="83.615147" y="276.489553" style="fill: var(--rev); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m29ac8959eb" x="123.786003" y="276.092026" style="fill: var(--rev); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m29ac8959eb" x="163.95686" y="273.522097" style="fill: var(--rev); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m29ac8959eb" x="204.127716" y="269.277387" style="fill: var(--rev); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m29ac8959eb" x="244.298572" y="261.082454" style="fill: var(--rev); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m29ac8959eb" x="284.469428" y="247.975426" style="fill: var(--rev); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m29ac8959eb" x="324.640284" y="226.214864" style="fill: var(--rev); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m29ac8959eb" x="364.81114" y="185.683527" style="fill: var(--rev); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m29ac8959eb" x="404.981997" y="145.479922" style="fill: var(--rev); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m29ac8959eb" x="445.152853" y="95.228142" style="fill: var(--rev); stroke: #000000; stroke-opacity: 0"/>
+</g>
+</g>
+<g id="home_ascore_line2d_26">
+<path d="M 83.615147 280.077312 
+L 123.786003 279.079322 
+L 163.95686 277.840382 
+L 204.127716 275.240975 
+L 244.298572 271.196818 
+L 284.469428 260.264187 
+L 324.640284 247.204669 
+L 364.81114 224.696995 
+L 404.981997 192.193504 
+L 445.152853 135.683236 
+" clip-path="url(#home_ascore_p22ec8d3d08)" style="fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round"/>
+<defs>
+<path id="home_ascore_m2ed83dcafe" d="M 0 2.5 
+C 0.663008 2.5 1.29895 2.236584 1.767767 1.767767 
+C 2.236584 1.29895 2.5 0.663008 2.5 0 
+C 2.5 -0.663008 2.236584 -1.29895 1.767767 -1.767767 
+C 1.29895 -2.236584 0.663008 -2.5 0 -2.5 
+C -0.663008 -2.5 -1.29895 -2.236584 -1.767767 -1.767767 
+C -2.236584 -1.29895 -2.5 -0.663008 -2.5 0 
+C -2.5 0.663008 -2.236584 1.29895 -1.767767 1.767767 
+C -1.29895 2.236584 -0.663008 2.5 0 2.5 
+z
+" style="stroke: #000000; stroke-opacity: 0"/>
+</defs>
+<g clip-path="url(#home_ascore_p22ec8d3d08)">
+<use xlink:href="#home_ascore_m2ed83dcafe" x="83.615147" y="280.077312" style="fill: var(--accent); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m2ed83dcafe" x="123.786003" y="279.079322" style="fill: var(--accent); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m2ed83dcafe" x="163.95686" y="277.840382" style="fill: var(--accent); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m2ed83dcafe" x="204.127716" y="275.240975" style="fill: var(--accent); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m2ed83dcafe" x="244.298572" y="271.196818" style="fill: var(--accent); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m2ed83dcafe" x="284.469428" y="260.264187" style="fill: var(--accent); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m2ed83dcafe" x="324.640284" y="247.204669" style="fill: var(--accent); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m2ed83dcafe" x="364.81114" y="224.696995" style="fill: var(--accent); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m2ed83dcafe" x="404.981997" y="192.193504" style="fill: var(--accent); stroke: #000000; stroke-opacity: 0"/>
+<use xlink:href="#home_ascore_m2ed83dcafe" x="445.152853" y="135.683236" style="fill: var(--accent); stroke: #000000; stroke-opacity: 0"/>
+</g>
+</g>
+<g id="home_ascore_patch_14">
+<path d="M 51.84 281.52 
+L 51.84 82.8 
+" style="fill: none; stroke: var(--rule); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+</g>
+<g id="home_ascore_patch_15">
+<path d="M 51.84 281.52 
+L 476.928 281.52 
+" style="fill: none; stroke: var(--rule); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+</g>
+<g id="home_ascore_legend_1">
+<g id="home_ascore_line2d_27">
+<path d="M 61.29 96.553359 
+L 71.79 96.553359 
+L 82.29 96.553359 
+" style="fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round"/>
+<g>
+<use xlink:href="#home_ascore_mc2ad0af2a2" x="71.79" y="96.553359" style="fill: var(--ink); stroke: #000000; stroke-opacity: 0"/>
+</g>
+</g>
+<g id="home_ascore_text_32">
+<text style="font-size: 10.5px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: start; fill: var(--ink)" x="90.69" y="100.228359" transform="rotate(-0 90.69 100.228359)">OOS</text>
+</g>
+<g id="home_ascore_line2d_28">
+<path d="M 61.29 111.965391 
+L 71.79 111.965391 
+L 82.29 111.965391 
+" style="fill: none; stroke: var(--rev); stroke-width: 2; stroke-linecap: round"/>
+<g>
+<use xlink:href="#home_ascore_m29ac8959eb" x="71.79" y="111.965391" style="fill: var(--rev); stroke: #000000; stroke-opacity: 0"/>
+</g>
+</g>
+<g id="home_ascore_text_33">
+<text style="font-size: 10.5px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: start; fill: var(--ink)" x="90.69" y="115.640391" transform="rotate(-0 90.69 115.640391)">OOT1</text>
+</g>
+<g id="home_ascore_line2d_29">
+<path d="M 61.29 127.377422 
+L 71.79 127.377422 
+L 82.29 127.377422 
+" style="fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round"/>
+<g>
+<use xlink:href="#home_ascore_m2ed83dcafe" x="71.79" y="127.377422" style="fill: var(--accent); stroke: #000000; stroke-opacity: 0"/>
+</g>
+</g>
+<g id="home_ascore_text_34">
+<text style="font-size: 10.5px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: start; fill: var(--ink)" x="90.69" y="131.052422" transform="rotate(-0 90.69 131.052422)">OOT2</text>
+</g>
+</g>
+</g>
+<g id="home_ascore_text_35">
+<text style="font-size: 10.5px; font-family: 'EB Garamond', 'DejaVu Serif', serif; text-anchor: start; fill: var(--muted)" x="20.736" y="24.370406" transform="rotate(-0 20.736 24.370406)">Điểm cắt hạng đặt trên Train. Cột: % hồ sơ OOS; đường: bad rate</text>
+</g>
+</g>
+<defs>
+<clipPath id="home_ascore_p8e6d040b8b">
+<rect x="51.84" y="82.8" width="425.088" height="198.72"/>
+</clipPath>
+<clipPath id="home_ascore_p22ec8d3d08">
+<rect x="51.84" y="82.8" width="425.088" height="198.72"/>
+</clipPath>
+</defs>
+</svg>
+      <div>
+        <div class="when">10/2026<span>Credit scoring</span></div>
+        <h3>A-Score</h3>
+        <p>Mô hình chấm điểm hồ sơ vay, minh họa trên dữ liệu Home Credit: 13 bước từ dữ liệu đến bảng điểm, validation và monitoring.</p>
+        <span class="more">Đọc bài →</span>
+      </div>
+    </a>
+    <a class="all-posts" href="blog/">All posts</a>
+    <div class="next"><a href="#certifications"><small>04</small>Certifications</a></div>
+  </section>
+
   <section class="sec" id="certifications">
-    <header class="sec-h"><span class="idx">03</span><h2>Certifications</h2><span></span></header>
+    <header class="sec-h"><span class="idx">04</span><h2>Certifications</h2><span></span></header>
     <div class="certs">
       <a class="cert" href="https://www.coursera.org/account/accomplishments/specialization/certificate/QRMN96LHVK7Q" target="_blank" rel="noopener noreferrer">
         <img src="images/cert_google_data_analytics.jpg" alt="Google Data Analytics Professional Certificate" loading="lazy">
