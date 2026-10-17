@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog — Vũ Nhật Quang</title>
+<meta name="description" content="Articles on credit risk modeling by Vũ Nhật Quang.">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=STIX+Two+Text:ital,wght@1,500&display=swap" rel="stylesheet">
+<style>
+/* cùng bộ màu và kiểu chữ với trang chủ (../index.html) */
+:root{
+  --paper:#EBEBEB; --surface:#FFFFFF; --ink:#111111; --muted:#5F5F5F; --rule:#D2D2D2; --accent:#D7191F;
+  --nav-h:64px; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --paper:#202020; --surface:#141414; --ink:#F2F2F2; --muted:#A3A3A3; --rule:#3A3A3A; --accent:#F0383E; color-scheme:dark; }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:'EB Garamond',Garamond,'Times New Roman',serif;font-variant-numeric:lining-nums;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.nav{position:fixed;inset:0 0 auto 0;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;background:var(--surface);border-bottom:1px solid var(--ink);z-index:10}
+.brand{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:600;letter-spacing:.02em}
+.mark{white-space:nowrap;flex-shrink:0;font-family:'STIX Two Text','Cambria Math','Times New Roman',serif;font-style:italic;font-weight:500;font-size:27px;line-height:1;letter-spacing:-.02em}
+.mark .scripts{position:relative;display:inline-block;width:.85em;height:1px;font-size:.6em;line-height:1}
+.mark .sup{position:absolute;left:.05em;bottom:.55em;font-family:'Cambria Math','STIX Two Math','Segoe UI Symbol',serif;font-style:normal}
+.mark .sub{position:absolute;left:.05em;top:-.45em;font-style:italic;color:var(--accent)}
+.links{display:flex;align-items:center;font-size:17px}
+.links a{letter-spacing:.02em}
+.links a + a::before{content:"/";color:var(--muted);margin:0 14px}
+.links a[aria-current]{color:var(--accent)}
+.wrap{max-width:1200px;margin:0 auto;padding:calc(var(--nav-h) + 112px) 48px 120px}
+.sec-h{display:flex;align-items:baseline;border-top:1px solid var(--ink);padding-top:18px;margin-bottom:48px}
+.idx{font-size:54px;line-height:1;font-style:italic;font-weight:500;color:var(--accent)}
+.idx::after{content:"/";color:var(--muted);font-style:normal;font-weight:400;margin:0 .28em}
+h1{font-size:54px;line-height:1;font-weight:500;margin:0}
+.posts{list-style:none;padding:0;margin:0}
+.posts li{border-top:1px solid var(--rule)}
+.posts a{display:grid;grid-template-columns:220px 1fr 40px;gap:24px;align-items:baseline;padding:28px 0}
+.when{font-size:18px;font-variant-numeric:tabular-nums}
+.when span{display:block;font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-top:4px}
+.post-t{font-size:31px;font-weight:500;line-height:1.25;display:block}
+.deck{font-size:19px;font-style:italic;color:var(--muted);margin:8px 0 0;line-height:1.5}
+.arrow{font-size:22px;text-align:right}
+.posts a:hover .post-t{color:var(--accent)}
+@media (max-width:768px){
+  .nav{padding:0 20px}.brand > span:not(.mark){display:none}
+  .links{font-size:14px}.links a + a::before{margin:0 7px}
+  .wrap{padding:calc(var(--nav-h) + 64px) 20px 80px}
+  .idx,h1{font-size:38px}
+  .posts a{grid-template-columns:1fr;gap:8px}.arrow{display:none}
+  .post-t{font-size:24px}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a class="brand" href="../" aria-label="Home">
+    <span class="mark" aria-hidden="true">E<span class="scripts"><span class="sup">ℚ</span><span class="sub">t</span></span></span>
+    <span>Quangtitative</span>
+  </a>
+  <nav class="links">
+    <a href="../#about">About</a><a href="../#experience">Experience</a><a href="../#education">Education</a><a href="./" aria-current="page">Blog</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <div class="sec-h"><span class="idx">#</span><h1>Blog</h1></div>
+  <!-- Thêm bài mới: chép file HTML vào blog/<tên-bài>/index.html, rồi thêm một <li> lên ĐẦU danh sách này (bài mới nhất trên cùng) -->
+  <ul class="posts">
+    <li>
+      <a href="ascore-home-credit/">
+        <div class="when">10/2026<span>Credit scoring</span></div>
+        <div>
+          <span class="post-t">A-Score</span>
+          <p class="deck">Mô hình chấm điểm hồ sơ vay, minh họa trên dữ liệu Home Credit: 13 bước từ dữ liệu đến bảng điểm, validation và monitoring.</p>
+        </div>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </li>
+  </ul>
+</main>
+
+</body>
+</html>
