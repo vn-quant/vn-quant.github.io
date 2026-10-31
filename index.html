@@ -1126,11 +1126,11 @@ function smooth(x){ x = x < 0 ? 0 : x > 1 ? 1 : x; return x*x*(3 - 2*x); }
 function sample(draw, w, h){ const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const ctx = cv.getContext('2d'); ctx.fillStyle = ctx.strokeStyle = '#fff'; draw(ctx);
   const d = ctx.getImageData(0, 0, w, h).data, px = []; for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (d[(y*w + x)*4 + 3] > 128) px.push(x, y); return px; }
 
-try { await Promise.race([Promise.all([document.fonts.load('700 40px "EB Garamond"'), document.fonts.load('italic 400 40px "EB Garamond"')]), new Promise(r => setTimeout(r, 2500))]); } catch(e) {}
+try { await Promise.race([Promise.all([document.fonts.load('700 40px "EB Garamond"'), document.fonts.load('italic 400 40px "EB Garamond"'), document.fonts.load('italic 500 40px "EB Garamond"'), document.fonts.load('500 40px "EB Garamond"')]), new Promise(r => setTimeout(r, 2500))]); } catch(e) {}
 
 // ---------- biểu tượng ----------
-// Thứ tự hạt: [0, C0) mái + dầm + bệ · [C0, K0) 3 cột, mỗi cột sinh ra từ một chữ "I" ở hero · [K0, NI) 3 đồng tiền
-const NR = 4200, NCOL = 1100, NC = 300, C0 = NR, K0 = NR + 3*NCOL, NI = K0 + 3*NC;
+// Thứ tự hạt: [0, C0) mái + dầm + bệ, sinh từ tên + dòng tag · [C0, K0) 3 cột, mỗi cột từ một chữ "I" · [K0, NI) 3 đồng tiền, từ dòng chữ đỏ
+const NR = 6000, NCOL = 1100, NC = 300, C0 = NR, K0 = NR + 3*NCOL, NI = K0 + 3*NC;
 const BW = 240, BH = 220, COLX = [70, 120, 170];
 const box = (ctx, x, y, w, h) => { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, 3) : ctx.rect(x, y, w, h); ctx.fill(); };
 const restPx = sample(ctx => {
@@ -1157,9 +1157,40 @@ const fA = gm.fontBoundingBoxAscent || GS*.8, fD = gm.fontBoundingBoxDescent || 
 const iPx = sample(ctx => { ctx.font = 'italic 400 ' + GS + 'px "EB Garamond", Garamond, serif'; ctx.textBaseline = 'alphabetic'; ctx.fillText('I', 20, 220); }, 120, 280);
 const iOff = new Float32Array(3*NCOL*2);
 for (let i = 0; i < 3*NCOL; i++){ const j = Math.floor(R()*iPx.length/2)*2; iOff[i*2] = (iPx[j] - 20)/GS; iOff[i*2+1] = (iPx[j+1] - 220)/GS; }
-// Mái, dầm, bệ, tiền tụ về từ một đám bụi quanh ô logo.
-const sOff = new Float32Array(NI*2), delay1 = new Float32Array(NI);
-for (let i = 0; i < NI; i++){ const a = R()*TAU, rr = 160 + R()*280; sOff[i*2] = Math.cos(a)*rr; sOff[i*2+1] = Math.sin(a)*rr*.7; delay1[i] = R(); }
+const delay1 = new Float32Array(NI); for (let i = 0; i < NI; i++) delay1[i] = R();
+// Các chữ còn lại ở hero cũng thành hạt: mỗi từ bọc trong span.pw để lấy vị trí trên trang,
+// nét chữ lấy mẫu ở cỡ REF (toạ độ theo baseline, đơn vị em) rồi nhân cỡ chữ thật mỗi khung hình.
+const REF = 120;
+const overEl = document.querySelector('#hero .over'), h1El = document.querySelector('#hero h1'), tagEl = document.querySelector('#hero .tag'), heroText = [overEl, h1El, tagEl];
+function wrapWords(el){
+  for (const n of [...el.childNodes]) if (n.nodeType === 3){
+    const f = document.createDocumentFragment();
+    n.textContent.split(/(\s+)/).forEach(t => { if (!t) return; if (/^\s+$/.test(t)) f.appendChild(document.createTextNode(t)); else { const sp = document.createElement('span'); sp.className = 'pw'; sp.textContent = t; f.appendChild(sp); } });
+    n.replaceWith(f);
+  }
+}
+heroText.forEach(wrapWords);
+function glyphs(span){
+  const cs = getComputedStyle(span), fs = parseFloat(cs.fontSize), ls = (parseFloat(cs.letterSpacing) || 0)*REF/fs;
+  const font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + REF + 'px ' + cs.fontFamily;
+  const txt = cs.textTransform === 'uppercase' ? span.textContent.toUpperCase() : span.textContent;
+  const m = document.createElement('canvas').getContext('2d'); m.font = font; if ('letterSpacing' in m) m.letterSpacing = ls + 'px';
+  const mt = m.measureText(txt), A = mt.fontBoundingBoxAscent || REF*.8, D = mt.fontBoundingBoxDescent || REF*.25, by = Math.ceil(A) + 10;
+  const px = sample(ctx => { ctx.font = font; if ('letterSpacing' in ctx) ctx.letterSpacing = ls + 'px'; ctx.textBaseline = 'alphabetic'; ctx.fillText(txt, 10, by); }, Math.ceil(mt.width + 30), Math.ceil(A + D) + 20);
+  for (let j = 0; j < px.length; j += 2){ px[j] = (px[j] - 10)/REF; px[j+1] = (px[j+1] - by)/REF; }
+  return {span, px, asc:A/(A + D)};
+}
+const restW = [...h1El.querySelectorAll('.pw'), ...tagEl.querySelectorAll('.pw')].map(glyphs);
+const overW = [...overEl.querySelectorAll('.pw')].map(glyphs);
+const words = restW.concat(overW);
+const srcW = new Int16Array(NI).fill(-1), srcO = new Float32Array(NI*2);
+function pick(list, base, i){                                   // chọn một điểm nét chữ, từ dài nhiều mực thì được chọn nhiều hơn
+  let tot = 0; for (const w of list) tot += w.px.length; let t = R()*tot, k = 0;
+  while (k < list.length - 1 && t >= list[k].px.length){ t -= list[k].px.length; k++; }
+  const j = Math.floor(R()*list[k].px.length/2)*2; srcW[i] = base + words.indexOf(list[k]) - base; srcO[i*2] = list[k].px[j]; srcO[i*2+1] = list[k].px[j+1];
+}
+for (let i = 0; i < C0; i++) pick(restW, 0, i);
+for (let k = 0; k < 3; k++){ const grp = overW.filter((_, w) => Math.floor(w*3/overW.length) === k); for (let i = K0 + k*NC; i < K0 + (k + 1)*NC; i++) pick(grp, 0, i); }
 
 // ---------- mặt sóng phối cảnh ----------
 // Camera nhìn ra một mặt phẳng vô tận: hàng cách đều trong không gian (dz), cột cách đều (dx).
@@ -1232,6 +1263,8 @@ new MutationObserver(paint).observe(document.documentElement, {attributes:true, 
 
 // ---------- vòng lặp: đọc vị trí ô logo mỗi khung hình, không dùng sự kiện scroll ----------
 const slot = document.getElementById('slot'), iSpans = [...document.querySelectorAll('.ii')];
+const wFs = () => words.map(w => parseFloat(getComputedStyle(w.span).fontSize));
+let wSize = wFs(); addEventListener('resize', () => { wSize = wFs(); });
 let T = 0, last = performance.now(), shown = true;
 function frame(now){
   const dt = Math.min(.05, (now - last)/1000); last = now; if (!reduce) T += dt;
@@ -1239,10 +1272,11 @@ function frame(now){
   const p1 = Math.min(1, Math.max(0, scrollY/Math.max(1, r.top + scrollY - H*.35)));   // 0 ở đầu trang: ba chữ I còn là chữ; 1: biểu tượng dựng xong
   const q = Math.min(1, Math.max(0, (H*.32 - r.top)/(H*.75)));     // 0: biểu tượng ở ô logo, 1: sóng phủ nền
   const live = p1 > .002;                                          // từ lúc này chữ I là hạt, chữ thật ẩn đi
-  if (live === shown){ shown = !live; iSpans.forEach(s => { s.style.opacity = live ? 0 : 1; }); }
+  if (live === shown){ shown = !live; heroText.forEach(el => { el.style.opacity = live ? 0 : 1; }); }
   if (q > 0) waveField(T);
   const fs = parseFloat(getComputedStyle(iSpans[0]).fontSize);
   const iBox = iSpans.map(s => { const b = s.getBoundingClientRect(); return {x:b.left, y:b.top + b.height*fA/(fA + fD)}; });
+  const wBox = p1 < 1 ? words.map((w, k) => { const b = w.span.getBoundingClientRect(); return {x:b.left, y:b.top + b.height*w.asc, s:wSize[k]}; }) : null;
   const coins = COIN.map((_, k) => { const a = T*.55 + k*TAU/3, z = Math.sin(a);
     return {x:cx + Math.cos(a)*150*sc, y:cy - 8*sc + z*30*sc, s:(15 + 5*(z + 1)/2)*sc}; });   // quỹ đạo elip nghiêng, đồng phía trước to hơn
   for (let i = 0; i < N; i++){
@@ -1257,7 +1291,7 @@ function frame(now){
       const e1 = smooth(p1*1.6 - delay1[i]*.6);
       let sx, sy, sa;
       if (i >= C0 && i < K0){ const k = Math.floor((i - C0)/NCOL), o = (i - C0)*2; sx = iBox[k].x + iOff[o]*fs; sy = iBox[k].y + iOff[o+1]*fs; sa = .7; }
-      else { sx = cx + sOff[i*2]*sc; sy = cy + sOff[i*2+1]*sc; sa = 0; }
+      else { const b = wBox[srcW[i]]; sx = b.x + srcO[i*2]*b.s; sy = b.y + srcO[i*2+1]*b.s; sa = .7; }
       ix = sx + (ix - sx)*e1; iy = sy + (iy - sy)*e1; ia = live ? sa + (1 - sa)*e1 : 0; isz = 1.1 + .5*e1;
     }
     pos[i*3] = e ? ix + (wx[g] - ix)*e : ix; pos[i*3+1] = -(e ? iy + (wy[g] - iy)*e : iy);
