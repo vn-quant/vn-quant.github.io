@@ -1132,11 +1132,11 @@ try { await Promise.race([Promise.all([document.fonts.load('700 40px "EB Garamon
 // ---------- biểu tượng ----------
 // Thứ tự hạt: [0, C0) mái + dầm + bệ, sinh từ tên + dòng tag · [C0, K0) 3 cột, mỗi cột từ một chữ "I" · [K0, NI) 3 đồng tiền, từ dòng chữ đỏ
 const NR = 6000, NCOL = 1100, NC = 300, C0 = NR, K0 = NR + 3*NCOL, NI = K0 + 3*NC;
-const BW = 240, BH = 220, COLX = [70, 120, 170];
+const BW = 240, BH = 220, COLX = [50, 120, 190];
 const box = (ctx, x, y, w, h) => { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, 3) : ctx.rect(x, y, w, h); ctx.fill(); };
 const restPx = sample(ctx => {
   ctx.beginPath(); ctx.moveTo(8, 96); ctx.lineTo(120, 22); ctx.lineTo(232, 96); ctx.closePath(); ctx.fill();   // mái
-  box(ctx, 24, 106, 192, 15);                                                                           // dầm
+  box(ctx, 8, 106, 224, 15);                                                                            // dầm
   box(ctx, 8, 199, 224, 17);                                                                            // bệ
 }, BW, BH);
 const colPx = sample(ctx => box(ctx, 120 - 15, 131, 30, 60), BW, BH);                                  // một cột mẫu ở giữa
