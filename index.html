@@ -1203,7 +1203,7 @@ let perm, delay, shade, pos, col, col2, mixA, size, alpha;
 function buildGrid(){
   const xs = [], zs = [];
   const ps = []; let row = 0;
-  for (let z = ZN; z <= ZF; z += DZ, row++){ const half = (W/2)*z/F + .6; let c = 0; for (let x = -half; x <= half; x += DX, c++){ xs.push(x); zs.push(z); ps.push((c + row) & 1); } }
+  for (let z = ZN; z <= ZF; z += DZ, row++){ const half = (W/2)*z/F + .6; for (let c = Math.ceil(-half/DX); c <= half/DX; c++){ xs.push(c*DX); zs.push(z); ps.push((c + row) & 1); } }   // cột theo lưới chung: ô (cột, hàng) xen kẽ đỏ/trắng như bàn cờ
   G = xs.length; cellX = Float32Array.from(xs); cellZ = Float32Array.from(zs); cellP = Uint8Array.from(ps);
   N = Math.max(G, NI);
   wx = new Float32Array(G); wy = new Float32Array(G); ws = new Float32Array(G); wa = new Float32Array(G);
