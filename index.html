@@ -160,6 +160,11 @@ body{font-family:'EB Garamond',Garamond,'Times New Roman',serif;font-variant-num
 .links a{letter-spacing:.02em}
 .links a + a::before{content:"/";color:var(--muted);margin:0 14px}
 .links .toggle{margin-left:24px}
+.lang{background:none;border:0;padding:4px;margin-left:24px;font:inherit;font-size:15px;letter-spacing:.06em;color:var(--muted);cursor:pointer}
+.lang b{font-weight:400}.lang b.on{color:var(--ink);font-weight:600}.lang i{font-style:normal;margin:0 4px}
+.links a{white-space:nowrap}
+.lang:focus-visible{outline:1px solid var(--ink);outline-offset:2px}
+@media (max-width:768px){ .lang{margin-left:12px;font-size:13px} .lang i{margin:0 2px} }
 .over{font-style:italic;text-transform:none;letter-spacing:.04em;font-size:21px;font-weight:500}
 h1{font-weight:500;letter-spacing:0;font-size:98px;line-height:1.05}
 .tag{font-size:27px;font-style:italic}
@@ -211,6 +216,8 @@ h2{font-size:54px;line-height:1;font-weight:500;letter-spacing:0}
 #hero{z-index:0}
 main.wrap{position:relative;z-index:2}
 .tag .ii{color:var(--accent)}
+/* điện thoại: thêm nút EN/VI nên thu gọn nav cho vừa 375px */
+@media (max-width:420px){ .nav{padding-left:12px;padding-right:12px} .links{font-size:12.5px} .links a + a::before{margin:0 3px} .lang{margin-left:6px;font-size:12px} .links .toggle{margin-left:4px} .toggle svg{width:44px;height:12px} }
 /* khoảng mép màn hình đến ảnh = khoảng ảnh đến chữ (= g), bên logo cũng vậy; --vw do script đặt = bề rộng không tính thanh cuộn */
 :root{--vw:100vw}
 .bio{--g:max(24px, (var(--vw) - 1140px)/4);grid-template-columns:230px minmax(0,680px) 230px;justify-content:center;column-gap:var(--g);margin-inline:calc((100% - var(--vw))/2 + var(--g))}
@@ -235,6 +242,7 @@ main.wrap{position:relative;z-index:2}
   <nav class="links">
     <a href="#about">About</a><a href="#experience">Experience</a><a href="#education">Education</a><a href="blog/">Blog</a>
     <!-- toggle sáng/tối = một ngưỡng -->
+    <button class="lang" id="lang" type="button" aria-label="Language: English / Tiếng Việt"><b data-l="en" class="on">EN</b><i>/</i><b data-l="vi">VI</b></button>
     <button class="toggle" id="toggle" aria-label="Toggle light/dark theme" title="Light / dark">
       <!-- mặt trời | thanh gạt | mặt trăng -->
       <svg width="70" height="18" viewBox="0 0 70 18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
@@ -1115,6 +1123,64 @@ document.fonts.ready.then(() => {
   if (REDUCED) revealFrame(1); else schedule();
 });
 </script>
+<script>
+/* ---------- tiếng Anh / tiếng Việt: mặc định tiếng Anh, nhớ lựa chọn trong trình duyệt ---------- */
+(function(){
+const VI = [
+  ['.links a[href="#about"]', 'Về tôi'],
+  ['.links a[href="#experience"]', 'Kinh nghiệm'],
+  ['.links a[href="#education"]', 'Học vấn'],
+  ['#hero .over', 'Phân tích &amp; Mô hình Rủi ro Tín dụng'],
+  ['#hero .cta a[href="#about"]', 'Về tôi'],
+  ['.bio-text p:nth-of-type(1)', 'Xin chào, tôi là Nhật Quang.'],
+  ['.bio-text p:nth-of-type(2)', 'Tôi là Risk Modeler tại <a href="https://www.seabank.com.vn" target="_blank" rel="noopener noreferrer">SeABank</a>. Tôi phát triển <strong>mô hình rủi ro tín dụng</strong> và thiết kế <strong>Hệ thống Xếp hạng Tín dụng Nội bộ</strong> của ngân hàng: pipeline chấm điểm, dữ liệu, quản trị và giám sát cho cả danh mục bán lẻ lẫn bán buôn.'],
+  ['.bio-text p:nth-of-type(3)', 'Tôi học <strong>Toán Kinh tế</strong> (MFE) tại Đại học Kinh tế Quốc dân (NEU) và <strong>Khoa học Tính toán Bảo hiểm</strong> (Actuarial Science) tại ISFA, Université Claude Bernard Lyon 1.'],
+  ['.bio-text p:nth-of-type(4)', 'Tôi quan tâm đến <strong>Giao dịch Định lượng</strong>, <strong>Xác suất</strong> và <strong>Quản trị Rủi ro Tài chính</strong>.'],
+  ['.bio-links .btn.primary', 'Liên hệ'],
+  ['.htl li:nth-child(1)', '<b>Vật lý</b><i>THPT chuyên Lê Hồng Phong</i>'],
+  ['.htl li:nth-child(3)', '<b>Kinh tế lượng</b><i>NEU</i>'],
+  ['.htl li:nth-child(5)', '<b>Tính toán Bảo hiểm</b><i>ISFA</i>'],
+  ['.htl li:nth-child(7)', '<b>Thực tập Risk Modeling</b><i>VPBank</i>'],
+  ['#about .next a', '<small>01</small>Kinh nghiệm'],
+  ['#experience .sec-h h2', 'Kinh nghiệm'],
+  ['#experience .timeline > li:nth-child(1) .when', '06/2025 đến nay<span>Hà Nội</span>'],
+  ['#experience .timeline > li:nth-child(1) .org', 'SeABank · Ngân hàng TMCP Đông Nam Á'],
+  ['#experience .timeline > li:nth-child(1) .what > ul', '<li>Phát triển mô hình<ul><li>A-Score xếp hạng tín dụng doanh nghiệp: thống kê và machine learning cho SME, AHP cho CBD</li><li>A-Score cho khách hàng cá nhân</li><li>Hệ thống cảnh báo sớm (EWS) cho khách hàng cá nhân</li></ul></li><li>Thiết kế pipeline chấm điểm của Hệ thống Xếp hạng Tín dụng Nội bộ (ICRS) cùng các quy trình dữ liệu, quản trị và giám sát cho danh mục bán lẻ và bán buôn</li><li>Đánh giá mô hình của đối tác cùng Women\'s World Banking: rà soát phương pháp, hệ thống và rủi ro sản phẩm</li><li>Quản trị mô hình: chuẩn hoá hồ sơ mô hình và danh mục mô hình tập trung theo Thông tư 83</li>'],
+  ['#experience .timeline > li:nth-child(2) .when', '09/2024 đến 12/2024<span>Hà Nội</span>'],
+  ['#experience .timeline > li:nth-child(2) h3', 'Thực tập sinh Risk Modeling'],
+  ['#experience .timeline > li:nth-child(2) .what > ul', '<li>Scorecard A-Score cho cho vay tiêu dùng</li><li>Dự báo kinh tế vĩ mô bằng ARIMA/SARIMA, tự động chọn mô hình và kiểm định ngoài mẫu (out-of-sample)</li>'],
+  ['#experience .next a', '<small>02</small>Học vấn'],
+  ['#education .sec-h h2', 'Học vấn'],
+  ['#education .timeline > li:nth-child(1) .when', '2020 đến 2022<span>Hà Nội</span>'],
+  ['#education .timeline > li:nth-child(1) h3', 'Chương trình ISFA Lyon 1 tại NEU'],
+  ['#education .timeline > li:nth-child(1) .org', 'Cử nhân (L3), Khoa học Tính toán Bảo hiểm'],
+  ['#education .timeline > li:nth-child(2) .when', '2017 đến 2022<span>Hà Nội</span>'],
+  ['#education .timeline > li:nth-child(2) h3', 'Đại học Kinh tế Quốc dân (NEU)'],
+  ['#education .timeline > li:nth-child(2) .org', 'Cử nhân, Kinh tế lượng và Kinh tế Định lượng'],
+  ['#education .timeline > li:nth-child(3) .when', '2014 đến 2017<span>Nam Định</span>'],
+  ['#education .timeline > li:nth-child(3) h3', 'THPT chuyên Lê Hồng Phong'],
+  ['#education .timeline > li:nth-child(3) .org', 'Tốt nghiệp THPT, chuyên Vật lý'],
+  ['#education .next a', '<small>03</small>Blog'],
+  ['.all-posts', 'Tất cả bài viết'],
+  ['#blog .next a', '<small>04</small>Chứng chỉ'],
+  ['#certifications .sec-h h2', 'Chứng chỉ']
+];
+const items = VI.map(([sel, vi]) => { const el = document.querySelector(sel); return el && {el, en:el.innerHTML, vi}; }).filter(Boolean);
+const btn = document.getElementById('lang');
+let cur = 'en';
+function setLang(l, announce){
+  if (l === cur) return; cur = l;
+  items.forEach(it => { it.el.innerHTML = it[l]; });
+  document.documentElement.lang = l;
+  btn.querySelectorAll('b').forEach(b => b.classList.toggle('on', b.dataset.l === l));
+  try { localStorage.setItem('lang', l); } catch(e) {}
+  if (announce){ dispatchEvent(new Event('langchange')); dispatchEvent(new Event('resize')); }
+}
+btn.addEventListener('click', () => setLang(cur === 'en' ? 'vi' : 'en', true));
+let saved = null; try { saved = localStorage.getItem('lang'); } catch(e) {}
+if (saved === 'vi') setLang('vi', false);
+})();
+</script>
 <script>{ const v = () => document.documentElement.style.setProperty("--vw", document.documentElement.clientWidth + "px"); v(); addEventListener("resize", v); }</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -1182,8 +1248,8 @@ function glyphs(span){
   return {span, px, asc:A/(A + D)};
 }
 const restW = [...h1El.querySelectorAll('.pw'), ...tagEl.querySelectorAll('.pw')].map(glyphs);
-const overW = [...overEl.querySelectorAll('.pw')].map(glyphs);
-const words = restW.concat(overW);
+let overW = [...overEl.querySelectorAll('.pw')].map(glyphs);
+let words = restW.concat(overW);
 const srcW = new Int16Array(NI).fill(-1), srcO = new Float32Array(NI*2);
 function pick(list, base, i){                                   // chọn một điểm nét chữ, từ dài nhiều mực thì được chọn nhiều hơn
   let tot = 0; for (const w of list) tot += w.px.length; let t = R()*tot, k = 0;
@@ -1191,7 +1257,9 @@ function pick(list, base, i){                                   // chọn một 
   const j = Math.floor(R()*list[k].px.length/2)*2; srcW[i] = base + words.indexOf(list[k]) - base; srcO[i*2] = list[k].px[j]; srcO[i*2+1] = list[k].px[j+1];
 }
 for (let i = 0; i < C0; i++) pick(restW, 0, i);
-for (let k = 0; k < 3; k++){ const grp = overW.filter((_, w) => Math.floor(w*3/overW.length) === k); for (let i = K0 + k*NC; i < K0 + (k + 1)*NC; i++) pick(grp, 0, i); }
+function pickCoins(){ for (let k = 0; k < 3; k++){ const grp = overW.filter((_, w) => Math.floor(w*3/overW.length) === k); for (let i = K0 + k*NC; i < K0 + (k + 1)*NC; i++) pick(grp, 0, i); } }
+pickCoins();
+addEventListener('langchange', () => { wrapWords(overEl); overW = [...overEl.querySelectorAll('.pw')].map(glyphs); words = restW.concat(overW); pickCoins(); });
 
 // ---------- mặt sóng phối cảnh ----------
 // Camera nhìn ra một mặt phẳng vô tận: hàng cách đều trong không gian (dz), cột cách đều (dx).
