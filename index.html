@@ -210,7 +210,9 @@ h2{font-size:54px;line-height:1;font-weight:500;letter-spacing:0}
 #field{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:1;pointer-events:none}
 #hero{z-index:0}
 main.wrap{position:relative;z-index:2}
-.bio{grid-template-columns:230px minmax(0,680px) 230px;justify-content:space-between;gap:56px;margin-inline:min(0px, calc((100% - min(1520px, 100vw - 96px))/2))}
+/* khoảng mép màn hình đến ảnh = khoảng ảnh đến chữ (= g), bên logo cũng vậy; --vw do script đặt = bề rộng không tính thanh cuộn */
+:root{--vw:100vw}
+.bio{--g:max(24px, (var(--vw) - 1140px)/4);grid-template-columns:230px minmax(0,680px) 230px;justify-content:center;column-gap:var(--g);margin-inline:calc((100% - var(--vw))/2 + var(--g))}
 .avatar{width:230px;height:230px}
 .slot{width:230px;height:230px}
 @media (max-width:980px){
@@ -1112,6 +1114,7 @@ document.fonts.ready.then(() => {
   if (REDUCED) revealFrame(1); else schedule();
 });
 </script>
+<script>{ const v = () => document.documentElement.style.setProperty("--vw", document.documentElement.clientWidth + "px"); v(); addEventListener("resize", v); }</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (async function(){
@@ -1163,12 +1166,13 @@ for (let i = 0; i < NI; i++){ const a = R()*TAU, rr = 160 + R()*280; sOff[i*2] =
 // Mỗi hàng chỉ lấy đủ cột để phủ kín bề ngang màn hình ở độ sâu đó, nên sóng luôn tràn viền.
 // Hàng càng xa càng dày và mờ dần về chân trời.
 const ZN = .55, ZF = 18, DZ = .12, DX = .05, CAMH = .75, HOR = .44;
-let W = 1, H = 1, F = 1, G = 0, N = 0, cellX, cellZ, wx, wy, ws, wa;
-let perm, delay, shade, pos, col, size, alpha;
+let W = 1, H = 1, F = 1, G = 0, N = 0, cellX, cellZ, cellP, wx, wy, ws, wa;
+let perm, delay, shade, pos, col, col2, mixA, size, alpha;
 function buildGrid(){
   const xs = [], zs = [];
-  for (let z = ZN; z <= ZF; z += DZ){ const half = (W/2)*z/F + .6; for (let x = -half; x <= half; x += DX){ xs.push(x); zs.push(z); } }
-  G = xs.length; cellX = Float32Array.from(xs); cellZ = Float32Array.from(zs);
+  const ps = []; let row = 0;
+  for (let z = ZN; z <= ZF; z += DZ, row++){ const half = (W/2)*z/F + .6; let c = 0; for (let x = -half; x <= half; x += DX, c++){ xs.push(x); zs.push(z); ps.push((c + row) & 1); } }
+  G = xs.length; cellX = Float32Array.from(xs); cellZ = Float32Array.from(zs); cellP = Uint8Array.from(ps);
   N = Math.max(G, NI);
   wx = new Float32Array(G); wy = new Float32Array(G); ws = new Float32Array(G); wa = new Float32Array(G);
   const r = rng(11); perm = new Uint32Array(N); delay = new Float32Array(N); shade = new Float32Array(N);
@@ -1188,8 +1192,8 @@ function waveField(t){
 }
 
 // ---------- WebGL: camera trực giao theo đơn vị pixel ----------
-const VS = `attribute vec3 aColor; attribute float aSize; attribute float aAlpha; varying vec3 vC; varying float vA; uniform float uPR;
-void main(){ vC = aColor; vA = aAlpha; gl_PointSize = aSize*uPR; gl_Position = projectionMatrix*modelViewMatrix*vec4(position, 1.0); }`;
+const VS = `attribute vec3 aColor; attribute vec3 aColor2; attribute float aMix; attribute float aSize; attribute float aAlpha; varying vec3 vC; varying float vA; uniform float uPR;
+void main(){ vC = mix(aColor, aColor2, aMix); vA = aAlpha; gl_PointSize = aSize*uPR; gl_Position = projectionMatrix*modelViewMatrix*vec4(position, 1.0); }`;
 const FS = `varying vec3 vC; varying float vA; uniform float uAlpha;
 void main(){ float d = length(gl_PointCoord - 0.5); if (d > 0.5) discard; gl_FragColor = vec4(vC, smoothstep(0.5, 0.2, d)*vA*uAlpha); }`;
 const canvas = document.getElementById('field');
@@ -1200,21 +1204,24 @@ let geo, pts;
 function tok(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
 function paint(){
   const ink = new THREE.Color(tok('--ink')), mute = new THREE.Color(tok('--muted')), acc = new THREE.Color(tok('--accent')), add = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
-  for (let i = 0; i < N; i++){ const c = (i >= K0 && i < NI) ? acc : ink.clone().lerp(mute, shade[i]*.7); col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b; }
-  geo.attributes.aColor.needsUpdate = true;
+  for (let i = 0; i < N; i++){ const c = (i >= K0 && i < NI) ? acc : ink.clone().lerp(mute, shade[i]*.7); col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
+    const w = cellP[perm[i]] ? acc : ink; col2[i*3] = w.r; col2[i*3+1] = w.g; col2[i*3+2] = w.b; }
+  geo.attributes.aColor.needsUpdate = true; geo.attributes.aColor2.needsUpdate = true;
   mat.blending = add ? THREE.AdditiveBlending : THREE.NormalBlending; mat.uniforms.uAlpha.value = add ? .8 : .9; mat.needsUpdate = true;
 }
 function resize(){
   W = canvas.clientWidth; H = canvas.clientHeight; F = H*.9;
   renderer.setSize(W, H, false); cam.right = W; cam.bottom = -H; cam.updateProjectionMatrix();
   buildGrid();
-  pos = new Float32Array(N*3); col = new Float32Array(N*3); size = new Float32Array(N); alpha = new Float32Array(N);
+  pos = new Float32Array(N*3); col = new Float32Array(N*3); col2 = new Float32Array(N*3); mixA = new Float32Array(N); size = new Float32Array(N); alpha = new Float32Array(N);
   if (pts){ scene.remove(pts); geo.dispose(); }
   geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
   geo.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
   geo.setAttribute('aSize', new THREE.BufferAttribute(size, 1));
   geo.setAttribute('aAlpha', new THREE.BufferAttribute(alpha, 1));
+  geo.setAttribute('aColor2', new THREE.BufferAttribute(col2, 3));
+  geo.setAttribute('aMix', new THREE.BufferAttribute(mixA, 1));
   pts = new THREE.Points(geo, mat); pts.frustumCulled = false; scene.add(pts);
   paint();
 }
@@ -1240,6 +1247,7 @@ function frame(now){
     return {x:cx + Math.cos(a)*150*sc, y:cy - 8*sc + z*30*sc, s:(15 + 5*(z + 1)/2)*sc}; });   // quỹ đạo elip nghiêng, đồng phía trước to hơn
   for (let i = 0; i < N; i++){
     const e = smooth(q*1.6 - delay[i]*.6), g = perm[i];
+    mixA[i] = i >= NI ? 1 : e;
     if (i >= NI){ if (e){ pos[i*3] = wx[g]; pos[i*3+1] = -wy[g]; } size[i] = e ? ws[g] : 0; alpha[i] = e ? wa[g]*e : 0; continue; }
     let ix, iy;
     if (i < K0){ ix = cx + bOff[i*2]*sc; iy = cy + bOff[i*2+1]*sc; }
@@ -1255,7 +1263,7 @@ function frame(now){
     pos[i*3] = e ? ix + (wx[g] - ix)*e : ix; pos[i*3+1] = -(e ? iy + (wy[g] - iy)*e : iy);
     size[i] = e ? isz + (ws[g] - isz)*e : isz; alpha[i] = e ? ia + (wa[g] - ia)*e : ia;
   }
-  geo.attributes.position.needsUpdate = true; geo.attributes.aSize.needsUpdate = true; geo.attributes.aAlpha.needsUpdate = true;
+  geo.attributes.position.needsUpdate = true; geo.attributes.aSize.needsUpdate = true; geo.attributes.aAlpha.needsUpdate = true; geo.attributes.aMix.needsUpdate = true;
   renderer.render(scene, cam);
   requestAnimationFrame(frame);
 }
