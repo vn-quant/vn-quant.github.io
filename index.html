@@ -210,6 +210,7 @@ h2{font-size:54px;line-height:1;font-weight:500;letter-spacing:0}
 #field{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:1;pointer-events:none}
 #hero{z-index:0}
 main.wrap{position:relative;z-index:2}
+.tag .ii{color:var(--accent)}
 /* khoảng mép màn hình đến ảnh = khoảng ảnh đến chữ (= g), bên logo cũng vậy; --vw do script đặt = bề rộng không tính thanh cuộn */
 :root{--vw:100vw}
 .bio{--g:max(24px, (var(--vw) - 1140px)/4);grid-template-columns:230px minmax(0,680px) 230px;justify-content:center;column-gap:var(--g);margin-inline:calc((100% - var(--vw))/2 + var(--g))}
@@ -1235,7 +1236,7 @@ let geo, pts;
 function tok(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
 function paint(){
   const ink = new THREE.Color(tok('--ink')), mute = new THREE.Color(tok('--muted')), acc = new THREE.Color(tok('--accent')), add = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
-  for (let i = 0; i < N; i++){ const c = (i >= K0 && i < NI) ? acc : ink.clone().lerp(mute, shade[i]*.7); col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
+  for (let i = 0; i < N; i++){ const c = (i >= C0 && i < NI) ? acc : ink.clone().lerp(mute, shade[i]*.7); col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
     const w = cellP[perm[i]] ? acc : ink; col2[i*3] = w.r; col2[i*3+1] = w.g; col2[i*3+2] = w.b; }
   geo.attributes.aColor.needsUpdate = true; geo.attributes.aColor2.needsUpdate = true;
   mat.blending = add ? THREE.AdditiveBlending : THREE.NormalBlending; mat.uniforms.uAlpha.value = add ? .8 : .9; mat.needsUpdate = true;
