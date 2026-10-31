@@ -207,7 +207,7 @@ h2{font-size:54px;line-height:1;font-weight:500;letter-spacing:0}
 .all-posts{display:inline-block;margin-top:8px;font-style:italic;font-size:18px;border-bottom:1px solid var(--ink);padding-bottom:2px}
 @media (max-width:768px){ .post{grid-template-columns:1fr;gap:20px} .post h3{font-size:24px} }
 /* biểu tượng ngân hàng bằng hạt (cột sinh từ 3 chữ I ở hero) và sóng hạt làm nền khi cuộn */
-#field{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:1;pointer-events:none}
+#field{position:fixed;left:0;top:0;width:100%;height:100vh;height:100lvh;display:block;z-index:1;pointer-events:none}
 #hero{z-index:0}
 main.wrap{position:relative;z-index:2}
 .tag .ii{color:var(--accent)}
@@ -1242,6 +1242,7 @@ function paint(){
   mat.blending = add ? THREE.AdditiveBlending : THREE.NormalBlending; mat.uniforms.uAlpha.value = add ? .8 : .9; mat.needsUpdate = true;
 }
 function resize(){
+  if (pts && canvas.clientWidth === W && canvas.clientHeight === H) return;   // điện thoại: thanh địa chỉ co giãn bắn resize nhưng canvas (100lvh) không đổi
   W = canvas.clientWidth; H = canvas.clientHeight; F = H*.9;
   renderer.setSize(W, H, false); cam.right = W; cam.bottom = -H; cam.updateProjectionMatrix();
   buildGrid();
@@ -1269,7 +1270,7 @@ let wSize = wFs(); addEventListener('resize', () => { wSize = wFs(); });
 let T = 0, last = performance.now(), shown = true;
 function frame(now){
   const dt = Math.min(.05, (now - last)/1000); last = now; if (!reduce) T += dt;
-  const r = slot.getBoundingClientRect(), sc = r.width/260, cx = r.left + r.width/2, cy = r.top + r.height/2 + 6*sc;
+  const r = slot.getBoundingClientRect(), sc = r.width/260, szK = Math.min(1, Math.max(.7, sc*1.15)), cx = r.left + r.width/2, cy = r.top + r.height/2 + 6*sc;
   const p1 = Math.min(1, Math.max(0, scrollY/Math.max(1, r.top + scrollY - H*.35)));   // 0 ở đầu trang: ba chữ I còn là chữ; 1: biểu tượng dựng xong
   const q = Math.min(1, Math.max(0, (H*.32 - r.top)/(H*.75)));     // 0: biểu tượng ở ô logo, 1: sóng phủ nền
   const live = p1 > .002;                                          // từ lúc này chữ I là hạt, chữ thật ẩn đi
@@ -1287,13 +1288,13 @@ function frame(now){
     let ix, iy;
     if (i < K0){ ix = cx + bOff[i*2]*sc; iy = cy + bOff[i*2+1]*sc; }
     else { const c = coins[Math.floor((i - K0)/NC)], o = (i - K0)*2; ix = c.x + cOff[o]*c.s; iy = c.y + cOff[o+1]*c.s; }
-    let ia = 1, isz = 1.6;
+    let ia = 1, isz = 1.6*szK;
     if (p1 < 1){
       const e1 = smooth(p1*1.6 - delay1[i]*.6);
       let sx, sy, sa;
-      if (i >= C0 && i < K0){ const k = Math.floor((i - C0)/NCOL), o = (i - C0)*2; sx = iBox[k].x + iOff[o]*fs; sy = iBox[k].y + iOff[o+1]*fs; sa = .7; }
+      if (i >= C0 && i < K0){ const k = Math.floor((i - C0)/NCOL), o = (i - C0)*2; sx = iBox[k].x + iOff[o]*fs; sy = iBox[k].y + iOff[o+1]*fs; sa = .4; }
       else { const b = wBox[srcW[i]]; sx = b.x + srcO[i*2]*b.s; sy = b.y + srcO[i*2+1]*b.s; sa = .7; }
-      ix = sx + (ix - sx)*e1; iy = sy + (iy - sy)*e1; ia = live ? sa + (1 - sa)*e1 : 0; isz = 1.1 + .5*e1;
+      ix = sx + (ix - sx)*e1; iy = sy + (iy - sy)*e1; ia = live ? sa + (1 - sa)*e1 : 0; isz = (1.1 + .5*e1)*szK;
     }
     pos[i*3] = e ? ix + (wx[g] - ix)*e : ix; pos[i*3+1] = -(e ? iy + (wy[g] - iy)*e : iy);
     size[i] = e ? isz + (ws[g] - isz)*e : isz; alpha[i] = e ? ia + (wa[g] - ia)*e : ia;
